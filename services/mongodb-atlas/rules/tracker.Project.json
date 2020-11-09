@@ -1,5 +1,5 @@
 {
-    "collection": "User",
+    "collection": "Project",
     "database": "tracker",
     "roles": [
         {
@@ -13,22 +13,16 @@
     ],
     "schema": {
         "bsonType": "object",
-        "title": "User",
+        "title": "Project",
         "properties": {
             "_id": {
-                "bsonType": "string"
+                "bsonType": "objectId"
             },
             "_partition": {
                 "bsonType": "string"
             },
             "name": {
                 "bsonType": "string"
-            },
-            "projects": {
-                "bsonType": "array",
-                "items": {
-                    "bsonType": "string"
-                }
             }
         },
         "required": [

@@ -1,7 +1,7 @@
 // --------------------------------
-//  removeTeamMember
+//  projectRemoveShare
 // --------------------------------
-exports = async function(email) {
+exports = async function(projectId, email) {
   const collection = context.services.get("mongodb-atlas").db("tracker").collection("User");
   const filter = {name: email};
   const memberToRemove = await collection.findOne(filter);
@@ -14,7 +14,7 @@ exports = async function(email) {
     return {error: "You cannot remove yourself from your team"};
   }
 
-  const {canWritePartitions} = memberToRemove;
+  const { canWritePartitions } = memberToRemove;
 
   const projectPartition = `project=${callingUser.id}`;
 
