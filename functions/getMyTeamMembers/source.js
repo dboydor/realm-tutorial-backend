@@ -1,20 +1,27 @@
+// --------------------------------
+//  getMyTeamMembers
+// --------------------------------
 exports = async function() {
   const cluster = context.services.get("mongodb-atlas");
   const collection = cluster.db("tracker").collection("User");
-  const caller = context.user;
-  const projectPartition = `project=${caller.id}`;
+  const thisUser = context.user;
+  const projectPartition = `project=${thisUser.id}`;
+
   const filter = {
     $or: [
       {"canReadPartitions": projectPartition}, // has my project id as a readable partition or
       {"canWritePartitions": projectPartition}, // has my project id as a writeable partition
     ], // and...
-    _id: {$ne: caller.id} // ...is not me
+    _id: {$ne: thisUser.id} // ...is not me
   };
-  const projection = {
+
+  const returnFields = {
     _id: 1,
     name: 1
   };
-  return await collection.find(filter, projection)
+
+  // Return list of users: [{_id, name}, ...]
+  return await collection.find(filter, returnFields)
     .sort({_id: 1})
     .toArray();
 };

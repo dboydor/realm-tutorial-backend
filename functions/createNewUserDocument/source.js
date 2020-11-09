@@ -1,6 +1,10 @@
+// --------------------------------
+//  createNewUserDocument
+// --------------------------------
 exports = async function createNewUserDocument({user}) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
+
   return users.insertOne({
     _id: user.id,
     _partition: `user=${user.id}`,
