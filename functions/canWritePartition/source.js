@@ -1,7 +1,7 @@
 // --------------------------------
 //  canWritePartition
 // --------------------------------
-exports = async function(partition) {
+const task = async function(partition) {
   try {
     const thisUser = context.user;
 
@@ -17,3 +17,11 @@ exports = async function(partition) {
     return false;
   }
 };
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}

@@ -1,7 +1,10 @@
 // --------------------------------
-//  getMyTeamMembers
+//  projectGetShared
+//
+//  Returns array with following values:
+//     { name, projectId, permissions }
 // --------------------------------
-exports = async function() {
+const task = async function() {
   const cluster = context.services.get("mongodb-atlas");
   const collection = cluster.db("tracker").collection("User");
   const thisUser = context.user;
@@ -25,3 +28,11 @@ exports = async function() {
     .sort({_id: 1})
     .toArray();
 };
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}

@@ -4,12 +4,12 @@
     which contains four keys: 'token', 'tokenId', 'username', and 'password', and additional parameters
     for each parameter passed in as part of the argument list from the SDK.
 
-    The return object must contain a 'status' key which can be empty or one of three string values: 
+    The return object must contain a 'status' key which can be empty or one of three string values:
       'success', 'pending', or 'fail'
 
     'success': the user's password is set to the passed in 'password' parameter.
 
-    'pending': the user's password is not reset and the UserPasswordAuthProviderClient 'resetPassword' function would 
+    'pending': the user's password is not reset and the UserPasswordAuthProviderClient 'resetPassword' function would
       need to be called with the token, tokenId, and new password via an SDK. (see below)
 
       const Realm = require("realm");
@@ -41,7 +41,7 @@
         // will set the users password to the password parameter
         return { status: 'success' };
       }
-  
+
       // will not reset the password
       return { status: 'fail' };
     };
@@ -49,7 +49,16 @@
     The uncommented function below is just a placeholder and will result in failure.
   */
 
-  exports = ({ token, tokenId, username, password }) => {
-    // will not reset the password
-    return { status: 'fail' };
-  };
+const task = ({ token, tokenId, username, password }) => {
+  // will not reset the password
+  return { status: 'fail' };
+};
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}
+

@@ -1,7 +1,7 @@
 // --------------------------------
 //  projectRemoveShare
 // --------------------------------
-exports = async function(projectId, email) {
+const task = async function(projectId, email) {
   const collection = context.services.get("mongodb-atlas").db("tracker").collection("User");
   const filter = {name: email};
   const memberToRemove = await collection.findOne(filter);
@@ -36,3 +36,12 @@ exports = async function(projectId, email) {
     return {error: error.toString()};
   }
 };
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}
+

@@ -1,7 +1,7 @@
 // --------------------------------
 //  projectAddShare
 // --------------------------------
-exports = async function(projectId, email, permissions) {
+const task = async function(projectId, email, permissions) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -20,13 +20,13 @@ exports = async function(projectId, email, permissions) {
   }
 
   if (shareUser._id === thisUser.id) {
-    return { error: "You already have access to project ${projectId}" };
+    return { error: `You already have access to project ${projectId}` };
   }
 
   const partition = `project=${project._id}`;
 
   if (shareUser.canWritePartitions && shareUser.canWritePartitions.includes(partition)) {
-     return {error: `User ${email} is already a member of your team`};
+     return {error: `User ${email} already has access to project ${projectId}`};
   }
 
   let addSet = {
@@ -53,3 +53,12 @@ exports = async function(projectId, email, permissions) {
     return {error: error.toString()};
   }
 };
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}
+

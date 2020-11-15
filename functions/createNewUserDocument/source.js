@@ -1,7 +1,7 @@
 // --------------------------------
 //  createNewUserDocument
 // --------------------------------
-exports = async function createNewUserDocument({user}) {
+const task = async function createNewUserDocument({user}) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
 
@@ -14,3 +14,11 @@ exports = async function createNewUserDocument({user}) {
     projects: [],
   });
 };
+
+// Running under Jest
+if (global.__MONGO_URI__) {
+  module.exports = task;
+// Running as Mongo Realm function
+} else {
+  exports = task;
+}
