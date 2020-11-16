@@ -1,7 +1,7 @@
 // --------------------------------
 //  projectAddShare
 // --------------------------------
-const task = async function(projectId, email, permissions) {
+const task = async function(projectId, shareToName, permissions) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -14,9 +14,9 @@ const task = async function(projectId, email, permissions) {
   }
 
   // Find user to add
-  const shareUser = await users.findOne({ name: email });
+  const shareUser = await users.findOne({ name: shareToName });
   if (shareUser == null) {
-    return { error: `User ${email} was not found` };
+    return { error: `User ${shareToName} was not found` };
   }
 
   if (shareUser._id === thisUser.id) {
@@ -26,7 +26,7 @@ const task = async function(projectId, email, permissions) {
   const partition = `project=${project._id}`;
 
   if (shareUser.canWritePartitions && shareUser.canWritePartitions.includes(partition)) {
-     return {error: `User ${email} already has access to project ${projectId}`};
+     return {error: `User ${shareToName} already has access to project ${projectId}`};
   }
 
   let addSet = {
@@ -54,11 +54,9 @@ const task = async function(projectId, email, permissions) {
   }
 };
 
-// Running under Jest
-if (global.__MONGO_URI__) {
-  module.exports = task;
 // Running as Mongo Realm function
-} else {
-  exports = task;
-}
+exports = task;
+
+// Running under Jest
+try { module.exports = task; } catch (e) {}
 

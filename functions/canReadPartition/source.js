@@ -18,10 +18,8 @@ const task = async function(partition) {
   }
 };
 
-// Running under Jest
-if (global.__MONGO_URI__) {
-  module.exports = task;
 // Running as Mongo Realm function
-} else {
-  exports = task;
-}
+exports = task;
+
+// Running under Jest
+try { module.exports = task; } catch (e) {}

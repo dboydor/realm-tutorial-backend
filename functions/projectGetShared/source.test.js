@@ -9,7 +9,25 @@ describe('insert', () => {
   let db;
   let context = {
     services: {},
-    user: {_id: '1', name: 'baobei@gmx.com'}
+    user: { id: 'user1', _partition: 'user=user1', name: 'user1@mail.com', projects: [] }
+  }
+
+  buildUsers = async (count) => {
+    const list = [];
+    for (var x = 1; x <= count; x++) {
+        list.push(
+          { _id: `user${x}`,
+            _partition: `user=user${x}`,
+             canReadPartitions: [],
+             canWriteParitions: [],
+             name: `user${x}@mail.com`,
+             projects: []
+           }
+        )
+    }
+
+    const users = db.collection('User');
+    await users.insertMany(list);
   }
 
   beforeAll(async () => {
@@ -27,10 +45,7 @@ describe('insert', () => {
       }
     }
 
-    // const cluster = context.services.get("mongodb-atlas");
-    // const users = cluster.db("tracker").collection("User");
-    // const projects = cluster.db("tracker").collection("Project");
-    // const thisUser = context.user;
+    buildUsers(3);
   });
 
   afterAll(async () => {
@@ -38,15 +53,24 @@ describe('insert', () => {
     await db.close();
   });
 
-  it('should insert a doc into collection', async () => {
-    const users = db.collection('users');
+  it('should return any projects', async () => {
+    const result = await task();
+    expect(result.length).toEqual(0);
+  });
 
-    const mockUser = {_id: 'some-user-id', name: 'John'};
-    await users.insertOne(mockUser);
+  it('should return any projects', async () => {
+    const users = db.collection('User');
+    await users.updateOne(
+      {_id: {$eq: "user2"}},
+      { $addToSet: { canReadPartitions: "project=project1" }},
+    )
 
-    const insertedUser = await users.findOne({_id: 'some-user-id'});
-    expect(insertedUser).toEqual(mockUser);
+    const user2 = await users.findOne({_id: {$eq: "user2"}})
 
-    task();
+    console.log(user2)
+
+    const result = await task();
+    console.log(result)
+    //expect(result.length).toEqual(1);
   });
 });
