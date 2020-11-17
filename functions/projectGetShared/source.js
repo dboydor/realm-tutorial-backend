@@ -8,15 +8,24 @@ const task = async function() {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const thisUser = context.user;
-  const projectPartition = `project=${thisUser.id}`;
-
   const { partitionsOwn } = thisUser.custom_data;
 
-  console.log(partitionsOwn)
+  // Create a filter to find any users that have access
+  // to any of the projects of this user
+  const canReadWrite = []
+  partitionsOwn.forEach((partition) => {
+      canReadWrite.push({ partitionsRead: partition });
+      canReadWrite.push({ partitionsWrite: partition })
+  })
 
   let result = await users.aggregate(
     { $unwind: "$projects" }, // One row for each project
-    { $match: { _id: { $ne: thisUser.id }}}, // ...is not me
+    { $match: {
+      $and: [
+        { _id: { $ne: thisUser.id }}, // ...is not me
+        { $or: canReadWrite }
+      ]}
+    },
     { $project: {
           name: 1,
           projects: 1
