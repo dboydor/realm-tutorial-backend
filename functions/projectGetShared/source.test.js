@@ -37,22 +37,32 @@ describe('insert', () => {
     await db.close();
   });
 
-  // it('should return any projects', async () => {
-  //   const result = await task();
-  //   expect(result.length).toEqual(0);
-  // });
+  beforeEach(async () => {
+      const users = db.collection('User');
+      context.user.custom_data = await users.findOne({_id: {$eq: "user1"}})
+  });
 
-  it('should return any projects', async () => {
+  // ---------------------------------------
+  //  Tests
+  // ---------------------------------------
+
+  it('should not return projects', async () => {
+    const result = await task();
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return many projects', async () => {
     addProjects("user1", 3, "r", "user2")
     addProjects("user1", 5, "rw", "user3")
 
     const users = db.collection('User');
     context.user.custom_data = await users.findOne({_id: {$eq: "user1"}})
-    console.log(context.user.custom_data)
-    const user2 = await users.findOne({_id: {$eq: "user2"}})
-    console.log(user2)
-    const user3 = await users.findOne({_id: {$eq: "user3"}})
-    console.log(user3)
+
+    // console.log(context.user.custom_data)
+    // const user2 = await users.findOne({_id: {$eq: "user2"}})
+    // console.log(user2)
+    // const user3 = await users.findOne({_id: {$eq: "user3"}})
+    // console.log(user3)
 
     const result = await task();
     console.log(result)
@@ -66,6 +76,10 @@ describe('insert', () => {
     expect(result[4].name).toEqual("user3@mail.com");
     expect(result[7].name).toEqual("user3@mail.com");
   });
+
+  // ---------------------------------------
+  //  Utilities
+  // ---------------------------------------
 
   buildUsers = async (count) => {
     const list = [];
@@ -93,6 +107,10 @@ describe('insert', () => {
 
     // Add this project to fromUser
     for (let x = 1; x <= count; x++) {
+        // In-memory instance
+        context.user.custom_data.partitionsOwn.push("project=" + fromUserId + "Project" + x)
+        context.user.custom_data.projects.push({ projectId: fromUserId + "Project" + x, permission: "o" })
+
         partitions.push("project=" + fromUserId + "Project" + x)
         projects.push({ projectId: fromUserId + "Project" + x, permission: "o" })
     }

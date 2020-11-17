@@ -18,14 +18,17 @@ const task = async function() {
       canReadWrite.push({ partitionsWrite: partition })
   })
 
+  const conditions = [
+      { _id: { $ne: thisUser.id }}, // ...is not me
+  ]
+
+  if (canReadWrite.length) {
+      conditions.push({ $or: canReadWrite })
+  }
+
   let result = await users.aggregate(
     { $unwind: "$projects" }, // One row for each project
-    { $match: {
-      $and: [
-        { _id: { $ne: thisUser.id }}, // ...is not me
-        { $or: canReadWrite }
-      ]}
-    },
+    { $match: { $and: conditions }},
     { $project: {
           name: 1,
           projects: 1
