@@ -5,12 +5,13 @@ const task = async function(partition) {
   try {
     const thisUser = context.user;
 
-    // The user custom data contains a canWritePartitions array that is managed
+    // The user custom data contains a partitionsWrite array that is managed
     // by a system function.
-    const { canWritePartitions } = thisUser.custom_data;
+    const { partitionsOwn, partitionsWrite } = thisUser.custom_data;
 
-    // If the user's canWritePartitions array contains the partition, they may write to it
-    return canWritePartitions && canWritePartitions.includes(partition);
+    // If the user's partitionsOwn or partitionsWrite array contains the partition, they may write to it
+    return (partitionsOwn && partitionsOwn.includes(partition)) ||
+           (partitionsWrite && partitionsWrite.includes(partition));
 
   } catch (error) {
     console.error(error);

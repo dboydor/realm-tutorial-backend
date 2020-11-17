@@ -30,16 +30,16 @@ const task = async function(projectId, shareToName, permissions) {
   }
 
   let addSet = {
-    projects: `${project.id}`,
+    projects: { id: `${project.id}`, permissions: permissions}
   };
 
   switch (permissions) {
      case "r":
-       addSet.canReadPartitions = partition;
+       addSet.partitionsRead = partition;
        break;
 
      case "rw":
-       addSet.canWritePartitions = partition;
+       addSet.partitionsWrite = partition;
        break;
   }
 
