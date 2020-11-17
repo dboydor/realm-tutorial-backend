@@ -43,13 +43,16 @@ describe('insert', () => {
   // });
 
   it('should return any projects', async () => {
-    addProject("user2", "project1", "r")
-    addProject("user2", "project2", "r")
+    addProjects("user1", 3, "r", "user2")
+    addProjects("user1", 5, "rw", "user3")
 
-    // const users = db.collection('User');
-    // const user2 = await users.findOne({_id: {$eq: "user2"}})
-
-    // console.log(user2)
+    const users = db.collection('User');
+    const user1 = await users.findOne({_id: {$eq: "user1"}})
+    console.log(user1)
+    const user2 = await users.findOne({_id: {$eq: "user2"}})
+    console.log(user2)
+    const user3 = await users.findOne({_id: {$eq: "user3"}})
+    console.log(user3)
 
     const result = await task();
     console.log(result)
@@ -75,15 +78,49 @@ describe('insert', () => {
     await users.insertMany(list);
   }
 
-  addProject = async (userId, projectId, permissions) => {
+  addProjects = async (fromUserId, count, permissions, toUserId) => {
     const users = db.collection('User');
+    let partitions = [];
+    let projects = [];
+
+    // Add this project to fromUser
+    for (let x = 1; x <= count; x++) {
+        partitions.push("project=" + fromUserId + "Project" + x)
+        projects.push({ id: fromUserId + "Project" + x, permissions: "o" })
+    }
+
+    let addSet = {
+        projects: { $each: projects },
+        partitionsOwn: { $each: partitions },
+    }
+
     await users.updateOne(
-      {_id: {$eq: userId}},
-      { $addToSet: {
-          partitionsRead: `project=${projectId}`,
-          projects: { id: projectId, permissions: permissions }
-        }
-      },
+      {_id: { $eq: fromUserId }},
+      { $addToSet: addSet },
+    )
+
+    // Now add to the toUser
+    partitions.length = 0;
+    projects.length = 0;
+
+    for (let x = 1; x <= count; x++) {
+        partitions.push("project=" + fromUserId + "Project" + x)
+        projects.push({ id: fromUserId + "Project" + x, permissions: permissions })
+    }
+
+    addSet = {
+        projects: { $each: projects },
+    }
+
+    if (permissions == "r") {
+        addSet.partitionsRead = { $each: partitions };
+    } else {
+        addSet.partitionsWrite = { $each: partitions };
+    }
+
+    await users.updateOne(
+      {_id: { $eq: toUserId }},
+      { $addToSet: addSet },
     )
   }
 });
