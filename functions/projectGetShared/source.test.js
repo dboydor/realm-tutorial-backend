@@ -9,7 +9,7 @@ describe('insert', () => {
   let db;
   let context = {
     services: {},
-    user: { id: 'user1', _partition: 'user=user1', name: 'user1@mail.com', projects: [] }
+    user: { id: "user1", custom_data: { _id: 'user1', _partition: 'user=user1', name: 'user1@mail.com', projects: [] }}
   }
 
   beforeAll(async () => {
@@ -47,8 +47,8 @@ describe('insert', () => {
     addProjects("user1", 5, "rw", "user3")
 
     const users = db.collection('User');
-    const user1 = await users.findOne({_id: {$eq: "user1"}})
-    console.log(user1)
+    context.user.custom_data = await users.findOne({_id: {$eq: "user1"}})
+    console.log(context.user.custom_data)
     const user2 = await users.findOne({_id: {$eq: "user2"}})
     console.log(user2)
     const user3 = await users.findOne({_id: {$eq: "user3"}})
@@ -56,7 +56,15 @@ describe('insert', () => {
 
     const result = await task();
     console.log(result)
-    //expect(result.length).toEqual(1);
+
+    expect(result.length).toEqual(8);
+    expect(result[0]).toHaveProperty('name');
+    expect(result[0]).toHaveProperty('projectId');
+    expect(result[0]).toHaveProperty('permission');
+    expect(result[0].name).toEqual("user2@mail.com");
+    expect(result[2].name).toEqual("user2@mail.com");
+    expect(result[4].name).toEqual("user3@mail.com");
+    expect(result[7].name).toEqual("user3@mail.com");
   });
 
   buildUsers = async (count) => {
@@ -78,7 +86,7 @@ describe('insert', () => {
     await users.insertMany(list);
   }
 
-  addProjects = async (fromUserId, count, permissions, toUserId) => {
+  addProjects = async (fromUserId, count, permission, toUserId) => {
     const users = db.collection('User');
     let partitions = [];
     let projects = [];
@@ -86,7 +94,7 @@ describe('insert', () => {
     // Add this project to fromUser
     for (let x = 1; x <= count; x++) {
         partitions.push("project=" + fromUserId + "Project" + x)
-        projects.push({ id: fromUserId + "Project" + x, permissions: "o" })
+        projects.push({ projectId: fromUserId + "Project" + x, permission: "o" })
     }
 
     let addSet = {
@@ -105,14 +113,14 @@ describe('insert', () => {
 
     for (let x = 1; x <= count; x++) {
         partitions.push("project=" + fromUserId + "Project" + x)
-        projects.push({ id: fromUserId + "Project" + x, permissions: permissions })
+        projects.push({ projectId: fromUserId + "Project" + x, permission: permission })
     }
 
     addSet = {
         projects: { $each: projects },
     }
 
-    if (permissions == "r") {
+    if (permission == "r") {
         addSet.partitionsRead = { $each: partitions };
     } else {
         addSet.partitionsWrite = { $each: partitions };

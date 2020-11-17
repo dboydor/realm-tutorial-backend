@@ -2,7 +2,7 @@
 //  projectGetShared
 //
 //  Returns array with following values:
-//     { name, projectId, permissions }
+//     { name, projectId, permission }
 // --------------------------------
 const task = async function() {
   const cluster = context.services.get("mongodb-atlas");
@@ -10,22 +10,13 @@ const task = async function() {
   const thisUser = context.user;
   const projectPartition = `project=${thisUser.id}`;
 
-  const filter = {
-    $or: [
-      {"partitionsRead": projectPartition}, // has my project id as a readable partition or
-      {"partitionsWrite": projectPartition}, // has my project id as a writeable partition
-    ], // and...
-    _id: {$ne: thisUser.id} // ...is not me
-  };
+  const { partitionsOwn } = thisUser.custom_data;
 
-  const returnFields = {
-    _id: 1,
-    name: 1
-  };
+  console.log(partitionsOwn)
 
   let result = await users.aggregate(
-    { $unwind: "$projects" },
-    { $match: { _id: { $ne: thisUser.id }}},
+    { $unwind: "$projects" }, // One row for each project
+    { $match: { _id: { $ne: thisUser.id }}}, // ...is not me
     { $project: {
           name: 1,
           projects: 1
@@ -34,16 +25,10 @@ const task = async function() {
   )
   .toArray();
 
-  result = result.map((row) => {
-      return { name: row.name, projectId: row.projects.id, permission: row.projects.permissions }
+  // Flatten result
+  return result.map((row) => {
+      return { name: row.name, projectId: row.projects.projectId, permission: row.projects.permission }
   });
-
-  return result;
-
-  // Return list of users: [{_id, name}, ...]
-  // return await users.find(filter, returnFields)
-  //   .sort({_id: 1})
-  //   .toArray();
 };
 
 // Running as Mongo Realm function

@@ -27,7 +27,19 @@
             "projects": {
                 "bsonType": "array",
                 "items": {
-                    "bsonType": "string"
+                    "bsonType": "object",
+                    "required": [
+                      "projectId",
+                      "permission"
+                    ],
+                    "properties": {
+                        "projectId": {
+                          "bsonType": "objectId"
+                        },
+                        "permission": {
+                          "bsonType": "string"
+                        }
+                    }
                 }
             }
         },
