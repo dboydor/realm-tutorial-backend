@@ -17,7 +17,6 @@ describe('insert', () => {
   });
 
   beforeEach(async () => {
-      await utils.cleanUsers(data)
       await utils.buildUsers(data, 3);
       await utils.buildProjects(data, "user1", 3);
       await utils.setGlobalUser(data, "user1")

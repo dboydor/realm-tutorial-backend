@@ -58,12 +58,8 @@ module.exports = {
     }
 
     const users = data.db.collection('User');
-    await users.insertMany(list);
-  },
-
-  cleanUsers: async (data) => {
-    const users = data.db.collection('User');
     await users.deleteMany({});
+    await users.insertMany(list);
   },
 
   getUser: async (data, userId) => {
