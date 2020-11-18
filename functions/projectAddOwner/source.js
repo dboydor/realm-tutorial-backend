@@ -20,6 +20,10 @@ const task = async function(projectId, userId) {
 
   const partition = `project=${project._id}`;
 
+  if (thisUser.partitionsOwn && thisUser.partitionsOwn.includes(partition)) {
+     return { error: `User ${userId} already owner of project ${projectId}`};
+  }
+
   let addSet = {
     partitionsOwn: partition,
     projects: { projectId: projectId, permission: "o" }

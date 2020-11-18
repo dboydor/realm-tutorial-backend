@@ -71,7 +71,7 @@ module.exports = {
     context.user.custom_data = await module.exports.getUser(data, userId);
   },
 
-  buildProjects: async (data, userId, count) => {
+  buildProjects: async (data, userId, count, noLinkUsers) => {
     let partitions = [];
     let projectIds = [];
 
@@ -93,19 +93,21 @@ module.exports = {
     await projects.deleteMany({});
     await projects.insertMany(list);
 
-    let addSet = {
-        projects: { $each: projectIds },
-        partitionsOwn: { $each: partitions },
+    if (!noLinkUsers) {
+      let addSet = {
+          projects: { $each: projectIds },
+          partitionsOwn: { $each: partitions },
+      }
+
+      const users = await data.db.collection('User');
+
+      await users.updateOne(
+        {_id: { $eq: userId }},
+        { $addToSet: addSet },
+      )
+
+      await module.exports.setGlobalUser(data, userId);
     }
-
-    const users = await data.db.collection('User');
-
-    await users.updateOne(
-      {_id: { $eq: userId }},
-      { $addToSet: addSet },
-    )
-
-    await module.exports.setGlobalUser(data, userId);
   },
 
   addProjects: async (data, fromUserId, count, permission, toUserId) => {

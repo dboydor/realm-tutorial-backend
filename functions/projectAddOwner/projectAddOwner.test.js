@@ -10,7 +10,7 @@ describe('insert', () => {
   let data;
 
   beforeAll(async () => {
-    data = await utils.init("addShare");
+    data = await utils.init("addOwner");
 
     // This function needs access to projectRemoveShare function
     context.functions = {
@@ -26,7 +26,7 @@ describe('insert', () => {
 
   beforeEach(async () => {
       await utils.buildUsers(data, 3);
-      await utils.buildProjects(data, "user1", 3);
+      await utils.buildProjects(data, "user1", 3, true);
       await utils.setGlobalUser(data, "user1")
   });
 
@@ -35,78 +35,30 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should fail with invalid project id', async () => {
-    const result = await task("badProject1", "user2@mail.com", "r");
+    const result = await task("badProject1", "user1");
     expect(result.error).toEqual("Project id badProject1 was not found");
   });
 
   it('should fail with invalid user id', async () => {
-    const result = await task("user1Project1", "user2@bad.com", "r");
-    expect(result.error).toEqual("User user2@bad.com was not found");
+    const result = await task("user1Project1", "userBad", "r");
+    expect(result.error).toEqual("User userBad was not found");
   });
 
-  it('should fail because user already owns this project', async () => {
-    const result = await task("user1Project1", "user1@mail.com", "r");
-    expect(result.error).toEqual("You already have access to project user1Project1");
-  });
+  it('should add project to owner', async () => {
+    await task("user1Project1", "user1");
+    const user = await utils.getUser(data, "user1");
 
-  it('should fail because user already owns this project', async () => {
-    const result = await task("user1Project1", "user1@mail.com", "r");
-    expect(result.error).toEqual("You already have access to project user1Project1");
-  });
+    const partition = `project=user1Project1`;
 
-  it('should add project as read share', async () => {
-    await task("user1Project1", "user2@mail.com", "r");
-    const user = await utils.getUser(data, "user2");
-
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(1);
+    expect(user.partitionsOwn.length).toEqual(1);
+    expect(user.partitionsOwn.includes(partition)).toEqual(true);
+    expect(user.partitionsRead.length).toEqual(0);
     expect(user.partitionsWrite.length).toEqual(0);
     expect(user.projects.length).toEqual(1);
-
-    const result = await task("user1Project1", "user2@mail.com", "r");
-    expect(result.error).toEqual("User user2@mail.com already has read access to project user1Project1");
-  });
-
-  it('should add project as write share', async () => {
-    await task("user1Project1", "user2@mail.com", "rw");
-    const user = await utils.getUser(data, "user2");
-
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.length).toEqual(1);
-    expect(user.projects.length).toEqual(1);
-
-    const result = await task("user1Project1", "user2@mail.com", "rw");
-    expect(result.error).toEqual("User user2@mail.com already has write access to project user1Project1");
-  });
-
-  it('should switch project from read share to write share', async () => {
-    await utils.addProjects(data, "user1", 3, "r", "user2")
-
-    await task("user1Project1", "user2@mail.com", "rw");
-    const user = await utils.getUser(data, "user2");
-
-    const partition = `project=user1Project1`;
-
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.includes(partition)).toEqual(false);
-    expect(user.partitionsWrite.includes(partition)).toEqual(true);
     const found = user.projects.find(project => project.projectId === "user1Project1");
-    expect(found.permission).toEqual("rw");
-  });
+    expect(found.permission).toEqual("o");
 
-  it('should switch project from write share to read share', async () => {
-    await utils.addProjects(data, "user1", 5, "rw", "user2")
-
-    await task("user1Project1", "user2@mail.com", "r");
-    const user = await utils.getUser(data, "user2");
-
-    const partition = `project=user1Project1`;
-
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.includes(partition)).toEqual(true);
-    expect(user.partitionsWrite.includes(partition)).toEqual(false);
-    const found = user.projects.find(project => project.projectId === "user1Project1");
-    expect(found.permission).toEqual("r");
+    const result = await task("user1Project1", "user1");
+    expect(result.error).toEqual("User user1 already owner of project user1Project1");
   });
 });

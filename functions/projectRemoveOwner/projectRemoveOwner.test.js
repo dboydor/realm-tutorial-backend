@@ -9,7 +9,7 @@ describe('insert', () => {
   let data;
 
   beforeAll(async () => {
-    data = await utils.init("removeShare");
+    data = await utils.init("removeOwner");
   });
 
   afterAll(async () => {
