@@ -4,12 +4,20 @@
 const { MongoClient } = require('mongodb');
 const utils = require('../testUtils.js');
 const task = require('./source.js');
+const taskRemoveShare = require('../projectRemoveShare/source.js');
 
 describe('insert', () => {
   let data;
 
   beforeAll(async () => {
     data = await utils.init("addShare");
+
+    // This function needs access to projectRemoveShare function
+    context.functions = {
+        execute: async (func, projectId, shareToEmail) => {
+            await taskRemoveShare(projectId, shareToEmail);
+        }
+    }
   });
 
   afterAll(async () => {
@@ -70,5 +78,35 @@ describe('insert', () => {
 
     const result = await task("user1Project1", "user2@mail.com", "rw");
     expect(result.error).toEqual("User user2@mail.com already has write access to project user1Project1");
+  });
+
+  it('should switch project from read share to write share', async () => {
+    await utils.addProjects(data, "user1", 3, "r", "user2")
+
+    await task("user1Project1", "user2@mail.com", "rw");
+    const user = await utils.getUser(data, "user2");
+
+    const partition = `project=user1Project1`;
+
+    expect(user.partitionsOwn.length).toEqual(0);
+    expect(user.partitionsRead.includes(partition)).toEqual(false);
+    expect(user.partitionsWrite.includes(partition)).toEqual(true);
+    const found = user.projects.find(project => project.projectId === "user1Project1");
+    expect(found.permission).toEqual("rw");
+  });
+
+  it('should switch project from write share to read share', async () => {
+    await utils.addProjects(data, "user1", 5, "rw", "user2")
+
+    await task("user1Project1", "user2@mail.com", "r");
+    const user = await utils.getUser(data, "user2");
+
+    const partition = `project=user1Project1`;
+
+    expect(user.partitionsOwn.length).toEqual(0);
+    expect(user.partitionsRead.includes(partition)).toEqual(true);
+    expect(user.partitionsWrite.includes(partition)).toEqual(false);
+    const found = user.projects.find(project => project.projectId === "user1Project1");
+    expect(found.permission).toEqual("r");
   });
 });

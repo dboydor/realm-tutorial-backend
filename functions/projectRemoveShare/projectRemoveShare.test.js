@@ -57,8 +57,10 @@ describe('insert', () => {
     const user = await utils.getUser(data, "user2");
     //console.log(user)
 
+    const partition = `project=user1Project1`;
+
     expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.includes("user1Project1")).toEqual(false);
+    expect(user.partitionsRead.includes(partition)).toEqual(false);
     expect(user.partitionsWrite.length).toEqual(0);
     const found = user.projects.find(project => project.projectId === "user1Project1");
     expect(found).toEqual(undefined);
@@ -72,9 +74,11 @@ describe('insert', () => {
     const user = await utils.getUser(data, "user3");
     //console.log(user)
 
+    const partition = `project=user1Project1`;
+
     expect(user.partitionsOwn.length).toEqual(0);
     expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.includes("user1Project1")).toEqual(false);
+    expect(user.partitionsWrite.includes(partition)).toEqual(false);
     const found = user.projects.find(project => project.projectId === "user1Project1");
     expect(found).toEqual(undefined);
   });

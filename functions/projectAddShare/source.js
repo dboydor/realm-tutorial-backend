@@ -24,9 +24,10 @@ const task = async function(projectId, shareToEmail, permission) {
   }
 
   const partition = `project=${project._id}`;
+  let removePrevious = false;
 
   let addSet = {
-    projects: { id: `${projectId}`, permission: permission}
+    projects: { projectId: `${projectId}`, permission: permission}
   };
 
   switch (permission) {
@@ -36,6 +37,11 @@ const task = async function(projectId, shareToEmail, permission) {
         }
 
         addSet.partitionsRead = partition;
+
+        // Project share permission is being switched from write to read
+        if (shareUser.partitionsWrite && shareUser.partitionsWrite.includes(partition)) {
+           removePrevious = true;
+        }
         break;
 
      case "rw":
@@ -44,17 +50,31 @@ const task = async function(projectId, shareToEmail, permission) {
         }
 
         addSet.partitionsWrite = partition;
+
+        // Project share permission is being switched from write to read
+        if (shareUser.partitionsRead && shareUser.partitionsRead.includes(partition)) {
+           removePrevious = true;
+        }
         break;
   }
 
   try {
+    // If this share was already defined with a different permission, remove
+    // the old version first
+    if (removePrevious) {
+        const result = await context.functions.execute("projectRemoveShare", projectId, shareToEmail);
+        if (result && result.error) {
+          return result;
+        }
+    }
+
     // Update the user to share with, indicating that he has access to this project
     return await users.updateOne(
       { _id: shareUser._id },
       { $addToSet: addSet },
     );
   } catch (error) {
-    return {error: error.toString()};
+    return { error: error.toString() };
   }
 };
 
