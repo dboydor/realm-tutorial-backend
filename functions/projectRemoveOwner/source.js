@@ -1,11 +1,10 @@
 // -------------------------------------------------------------------
 //  projectRemoveShare
 // -------------------------------------------------------------------
-const task = async function(projectId, shareToEmail) {
+const task = async function(projectId, userId) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
-  const thisUser = context.user;
 
   // Find project to remove
   const project = await projects.findOne({ _id: projectId });
@@ -13,29 +12,23 @@ const task = async function(projectId, shareToEmail) {
     return { error: `Project id ${projectId} was not found` };
   }
 
-  const userToRemove = await users.findOne({ name: shareToEmail });
-  if (userToRemove == null) {
+  const thisUser = await users.findOne({ _id: userId });
+  if (thisUser == null) {
     return { error: `User ${shareToEmail} was not found` };
   }
 
-  if (userToRemove._id === thisUser.id) {
-    return { error: "You cannot remove share from yourself" };
-  }
-
   const projectPartition = `project=${project._id}`;
-  const { partitionsRead, partitionsWrite } = userToRemove;
+  const { partitionsOwn } = thisUser;
 
-  if (   (!partitionsRead || !partitionsRead.includes(projectPartition))
-      && (!partitionsWrite || !partitionsWrite.includes(projectPartition))) {
-    return { error: `Project ${projectId} was not shared with user ${shareToEmail}` };
+  if (!partitionsOwn || !partitionsOwn.includes(projectPartition)) {
+    return { error: `Project ${projectId} is not owned by user ${shareToEmail}` };
   }
 
   try {
     return await users.updateOne(
-      { _id: userToRemove._id},
+      { _id: thisUser._id},
       { $pull: {
-          partitionsRead: projectPartition,
-          partitionsWrite: projectPartition,
+          partitionsOwn: projectPartition,
           projects: { projectId: `${projectId}` }
         }
       });
