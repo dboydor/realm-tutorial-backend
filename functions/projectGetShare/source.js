@@ -1,9 +1,9 @@
-// --------------------------------
+// -------------------------------------------------------------------
 //  projectGetShared
 //
 //  Returns array with following values:
 //     { name, projectId, permission }
-// --------------------------------
+// -------------------------------------------------------------------
 const task = async function() {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");

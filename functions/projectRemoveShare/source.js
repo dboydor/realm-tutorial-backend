@@ -1,6 +1,6 @@
-// --------------------------------
+// -------------------------------------------------------------------
 //  projectRemoveShare
-// --------------------------------
+// -------------------------------------------------------------------
 const task = async function(projectId, shareToEmail) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");

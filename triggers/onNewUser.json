@@ -7,6 +7,6 @@
             "local-userpass"
         ]
     },
-    "function_name": "createNewUserDocument",
+    "function_name": "eventCreatedUser",
     "disabled": false
 }

@@ -1,7 +1,9 @@
-// --------------------------------
+// -------------------------------------------------------------------
 //  eventCreatedUser
-// --------------------------------
-const task = async function eventCreatedUser({user}) {
+//
+//  Handles authentication trigger when new user created
+// -------------------------------------------------------------------
+const task = async function ({user}) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
 
