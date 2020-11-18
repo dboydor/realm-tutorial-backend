@@ -46,12 +46,12 @@ describe('insert', () => {
   //  Tests
   // ---------------------------------------
 
-  it('projectGetShared should not return projects', async () => {
+  it('should not return projects', async () => {
     const result = await task();
     expect(result.length).toEqual(0);
   });
 
-  it('projectGetShared should return many projects', async () => {
+  it('should return many projects', async () => {
     addProjects("user1", 3, "r", "user2")
     addProjects("user1", 5, "rw", "user3")
 
