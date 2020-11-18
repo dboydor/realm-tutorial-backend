@@ -4,7 +4,7 @@
   "license": "UNLICENSED",
   "description": "Realm tutorial backend",
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^1.2.3",

@@ -1,7 +1,7 @@
 // --------------------------------
 //  projectAddShare
 // --------------------------------
-const task = async function(projectId, shareToName, permission) {
+const task = async function(projectId, shareToEmail, permission) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -14,9 +14,9 @@ const task = async function(projectId, shareToName, permission) {
   }
 
   // Find user to add
-  const shareUser = await users.findOne({ name: shareToName });
+  const shareUser = await users.findOne({ name: shareToEmail });
   if (shareUser == null) {
-    return { error: `User ${shareToName} was not found` };
+    return { error: `User ${shareToEmail} was not found` };
   }
 
   if (shareUser._id === thisUser.id) {
@@ -32,7 +32,7 @@ const task = async function(projectId, shareToName, permission) {
   switch (permission) {
      case "r":
         if (shareUser.partitionsRead && shareUser.partitionsRead.includes(partition)) {
-           return { error: `User ${shareToName} already has read access to project ${projectId}`};
+           return { error: `User ${shareToEmail} already has read access to project ${projectId}`};
         }
 
         addSet.partitionsRead = partition;
@@ -40,7 +40,7 @@ const task = async function(projectId, shareToName, permission) {
 
      case "rw":
         if (shareUser.partitionsWrite && shareUser.partitionsWrite.includes(partition)) {
-           return { error: `User ${shareToName} already has write access to project ${projectId}`};
+           return { error: `User ${shareToEmail} already has write access to project ${projectId}`};
         }
 
         addSet.partitionsWrite = partition;

@@ -1,5 +1,5 @@
 // --------------------------------
-//  Test for projectAddShared
+//  Test for projectAddShare
 // --------------------------------
 const { MongoClient } = require('mongodb');
 const utils = require('../testUtils.js');
@@ -10,9 +10,6 @@ describe('insert', () => {
 
   beforeAll(async () => {
     data = await utils.init();
-
-    await utils.buildUsers(data, 3);
-    await utils.buildProjects(data, "user1", 3);
   });
 
   afterAll(async () => {
@@ -20,6 +17,9 @@ describe('insert', () => {
   });
 
   beforeEach(async () => {
+      await utils.cleanUsers(data)
+      await utils.buildUsers(data, 3);
+      await utils.buildProjects(data, "user1", 3);
       await utils.setGlobalUser(data, "user1")
   });
 
@@ -64,11 +64,10 @@ describe('insert', () => {
     await task("user1Project1", "user2@mail.com", "rw");
     const user = await utils.getUser(data, "user2");
 
-    // Cumulative from test above
     expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(1);
+    expect(user.partitionsRead.length).toEqual(0);
     expect(user.partitionsWrite.length).toEqual(1);
-    expect(user.projects.length).toEqual(2);
+    expect(user.projects.length).toEqual(1);
 
     const result = await task("user1Project1", "user2@mail.com", "rw");
     expect(result.error).toEqual("User user2@mail.com already has write access to project user1Project1");

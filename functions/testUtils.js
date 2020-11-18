@@ -58,8 +58,12 @@ module.exports = {
     }
 
     const users = data.db.collection('User');
-    // await users.deleteMany({});
     await users.insertMany(list);
+  },
+
+  cleanUsers: async (data) => {
+    const users = data.db.collection('User');
+    await users.deleteMany({});
   },
 
   getUser: async (data, userId) => {
@@ -89,7 +93,7 @@ module.exports = {
     }
 
     const projects = await data.db.collection('Project');
-    // await projects.deleteMany({});
+    await projects.deleteMany({});
     await projects.insertMany(list);
 
     let addSet = {
@@ -104,7 +108,7 @@ module.exports = {
       { $addToSet: addSet },
     )
 
-    context.user.custom_data = await users.findOne({_id: {$eq: userId}});
+    await module.exports.setGlobalUser(data, userId);
   },
 
   addProjects: async (data, fromUserId, count, permission, toUserId) => {
