@@ -80,7 +80,8 @@ module.exports = {
         list.push(
           { _id: `${userId}Project${x}`,
             _partition: `project=${userId}Project${x}`,
-             name: `Project #${x}`,
+            ownerId: userId,
+            name: `Project #${x}`,
            }
         )
 

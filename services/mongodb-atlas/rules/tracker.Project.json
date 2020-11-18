@@ -21,6 +21,9 @@
             "_partition": {
                 "bsonType": "string"
             },
+            "ownerId": {
+                "bsonType": "string"
+            },
             "name": {
                 "bsonType": "string"
             }
@@ -28,6 +31,7 @@
         "required": [
             "_id",
             "_partition",
+            "ownerId",
             "name"
         ]
     }

@@ -1,0 +1,20 @@
+{
+    "name": "onProjectChanged",
+    "type": "DATABASE",
+    "config": {
+        "operation_types": [
+            "INSERT",
+            "DELETE",
+            "REPLACE"
+        ],
+        "database": "tracker",
+        "collection": "Project",
+        "service_name": "",
+        "match": {},
+        "project": {},
+        "full_document": true,
+        "unordered": false
+    },
+    "function_name": "eventProjectChanged",
+    "disabled": false
+}
