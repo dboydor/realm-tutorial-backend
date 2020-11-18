@@ -46,12 +46,12 @@ describe('insert', () => {
   //  Tests
   // ---------------------------------------
 
-  it('should not return projects', async () => {
+  it('projectGetShared should not return projects', async () => {
     const result = await task();
     expect(result.length).toEqual(0);
   });
 
-  it('should return many projects', async () => {
+  it('projectGetShared should return many projects', async () => {
     addProjects("user1", 3, "r", "user2")
     addProjects("user1", 5, "rw", "user3")
 
@@ -65,7 +65,7 @@ describe('insert', () => {
     // console.log(user3)
 
     const result = await task();
-    console.log(result)
+    // console.log(result)
 
     expect(result.length).toEqual(8);
     expect(result[0]).toHaveProperty('name');
