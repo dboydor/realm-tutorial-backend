@@ -8,7 +8,7 @@ describe('insert', () => {
   let data;
 
   beforeAll(async () => {
-    data = await utils.init();
+    data = await utils.init("getShare");
   });
 
   afterAll(async () => {

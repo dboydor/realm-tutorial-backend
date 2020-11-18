@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 module.exports = {
-  init: async () => {
+  init: async (dbName) => {
     const data = {};
 
     data.connection = await MongoClient.connect(global.__MONGO_URI__, {
@@ -9,7 +9,7 @@ module.exports = {
       useUnifiedTopology: true
     });
 
-    data.db = await data.connection.db(global.__MONGO_DB_NAME__);
+    data.db = await data.connection.db(dbName);
 
     let context = {
       services: {},
