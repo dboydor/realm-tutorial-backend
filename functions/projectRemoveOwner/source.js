@@ -14,14 +14,14 @@ const task = async function(projectId, userId) {
 
   const thisUser = await users.findOne({ _id: userId });
   if (thisUser == null) {
-    return { error: `User ${shareToEmail} was not found` };
+    return { error: `User ${userId} was not found` };
   }
 
   const projectPartition = `project=${project._id}`;
   const { partitionsOwn } = thisUser;
 
   if (!partitionsOwn || !partitionsOwn.includes(projectPartition)) {
-    return { error: `Project ${projectId} is not owned by user ${shareToEmail}` };
+    return { error: `Project ${projectId} is not owned by user ${userId}` };
   }
 
   try {
