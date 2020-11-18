@@ -1,5 +1,5 @@
 {
     "can_evaluate": {},
-    "name": "createNewUserDocument",
+    "name": "eventCreatedUser",
     "private": true
 }

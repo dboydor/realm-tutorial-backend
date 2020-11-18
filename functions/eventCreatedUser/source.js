@@ -1,7 +1,7 @@
 // --------------------------------
-//  createNewUserDocument
+//  eventCreatedUser
 // --------------------------------
-const task = async function createNewUserDocument({user}) {
+const task = async function eventCreatedUser({user}) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
 
