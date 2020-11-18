@@ -1,39 +1,47 @@
 // --------------------------------
 //  projectRemoveShare
 // --------------------------------
-const task = async function(projectId, email) {
-  const collection = context.services.get("mongodb-atlas").db("tracker").collection("User");
-  const filter = {name: email};
-  const memberToRemove = await collection.findOne(filter);
-  if (memberToRemove == null) {
-    return {error: `User ${email} not found`};
+const task = async function(projectId, shareToEmail) {
+  const cluster = context.services.get("mongodb-atlas");
+  const users = cluster.db("tracker").collection("User");
+  const projects = cluster.db("tracker").collection("Project");
+  const thisUser = context.user;
+
+  // Find project to remove
+  const project = await projects.findOne({ _id: projectId });
+  if (!project) {
+    return { error: `Project id ${projectId} was not found` };
   }
-  const callingUser = context.user;
 
-  if (memberToRemove._id === callingUser.id) {
-    return {error: "You cannot remove yourself from your team"};
+  const userToRemove = await users.findOne({ name: shareToEmail });
+  if (userToRemove == null) {
+    return { error: `User ${shareToEmail} was not found` };
   }
 
-  const { canWritePartitions } = memberToRemove;
+  if (userToRemove._id === thisUser.id) {
+    return { error: "You cannot remove share from yourself" };
+  }
 
-  const projectPartition = `project=${callingUser.id}`;
+  const { partitionsRead, partitionsWrite } = userToRemove;
 
-  if ((canWritePartitions == null) || !canWritePartitions.includes(projectPartition)) {
-    return {error: `User ${email} is not a member of your team`};
+  const projectPartition = `project=${project._id}`;
+
+  if (   (!partitionsRead || !partitionsRead.includes(projectPartition))
+      && (!partitionsWrite || !partitionsWrite.includes(projectPartition))) {
+    return { error: `Project ${projectId} was not shared with user ${shareToEmail}` };
   }
 
   try {
-    return await collection.updateOne(
-      {_id: memberToRemove._id},
-      {$pull: {
-          canWritePartitions: projectPartition,
-          memberOf: {
-              partition: projectPartition,
-          }
+    return await users.updateOne(
+      { _id: userToRemove._id},
+      { $pull: {
+          partitionsRead: projectPartition,
+          partitionsWrite: projectPartition,
+          projects: { projectId: `${projectId}` }
         }
       });
   } catch (error) {
-    return {error: error.toString()};
+    return { error: error.toString() };
   }
 };
 

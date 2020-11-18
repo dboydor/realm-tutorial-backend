@@ -37,10 +37,8 @@ describe('insert', () => {
       await utils.setGlobalUser(data, "user1")
 
       // console.log(context.user.custom_data)
-      // const user2 = await utils.getUser("user2")
-      // console.log(user2)
-      // const user3 = await utils.getUser("user3")
-      // console.log(user3)
+      // console.log(await utils.getUser("user2"))
+      // console.log(await utils.getUser("user3"))
 
       const result = await task();
       // console.log(result)

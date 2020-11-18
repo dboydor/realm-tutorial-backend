@@ -9,7 +9,7 @@ const task = async function(projectId, shareToEmail, permission) {
 
   // Find project to add
   const project = await projects.findOne({ _id: projectId });
-  if (project == null) {
+  if (!project) {
     return { error: `Project id ${projectId} was not found` };
   }
 
