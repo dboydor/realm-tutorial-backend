@@ -29,7 +29,7 @@ describe('insert', () => {
       }
     }
 
-    buildUsers(3);
+    await buildUsers(3);
   });
 
   afterAll(async () => {
@@ -52,8 +52,8 @@ describe('insert', () => {
   });
 
   it('should return many projects', async () => {
-    addProjects("user1", 3, "r", "user2")
-    addProjects("user1", 5, "rw", "user3")
+    await addProjects("user1", 3, "r", "user2")
+    await addProjects("user1", 5, "rw", "user3")
 
     const users = db.collection('User');
     context.user.custom_data = await users.findOne({_id: {$eq: "user1"}})
@@ -97,6 +97,7 @@ describe('insert', () => {
     }
 
     const users = db.collection('User');
+    await users.deleteMany({});
     await users.insertMany(list);
   }
 

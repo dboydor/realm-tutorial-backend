@@ -1,7 +1,7 @@
 // --------------------------------
 //  projectAddShare
 // --------------------------------
-const task = async function(projectId, shareToName, permissions) {
+const task = async function(projectId, shareToName, permission) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -25,27 +25,31 @@ const task = async function(projectId, shareToName, permissions) {
 
   const partition = `project=${project._id}`;
 
-  if (shareUser.canWritePartitions && shareUser.canWritePartitions.includes(partition)) {
-     return {error: `User ${shareToName} already has access to project ${projectId}`};
-  }
-
   let addSet = {
-    projects: { id: `${project.id}`, permissions: permissions}
+    projects: { id: `${projectId}`, permission: permission}
   };
 
-  switch (permissions) {
+  switch (permission) {
      case "r":
-       addSet.partitionsRead = partition;
-       break;
+        if (shareUser.partitionsRead && shareUser.partitionsRead.includes(partition)) {
+           return { error: `User ${shareToName} already has read access to project ${projectId}`};
+        }
+
+        addSet.partitionsRead = partition;
+        break;
 
      case "rw":
-       addSet.partitionsWrite = partition;
-       break;
+        if (shareUser.partitionsWrite && shareUser.partitionsWrite.includes(partition)) {
+           return { error: `User ${shareToName} already has write access to project ${projectId}`};
+        }
+
+        addSet.partitionsWrite = partition;
+        break;
   }
 
   try {
     // Update the user to share with, indicating that he has access to this project
-    return await collection.updateOne(
+    return await users.updateOne(
       { _id: shareUser._id },
       { $addToSet: addSet },
     );
