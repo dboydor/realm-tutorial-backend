@@ -9,7 +9,7 @@
         ],
         "database": "tracker",
         "collection": "Project",
-        "service_name": "",
+        "service_name": "mongodb-atlas",
         "match": {},
         "project": {},
         "full_document": true,
