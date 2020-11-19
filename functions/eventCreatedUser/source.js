@@ -11,7 +11,7 @@ const task = async function ({user}) {
     _id: user.id,
     _partition: `user=${user.id}`,
     name: user.data.email,
-    partitionsOwn: [],
+    partitionsOwn: [`user=${user.id}`],
     partitionsRead: [],
     partitionsWrite: [],
     projects: [],
