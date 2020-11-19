@@ -9,17 +9,18 @@ const task = async function (event) {
   const users = cluster.db("tracker").collection("User");
   const project = event.fullDocument;
   const userId = project.ownerId;
+  let result;
 
   switch (event.operationType) {
       case "INSERT":
-        const result = await context.functions.execute("projectAddOwner", projectId, userId);
+        result = await context.functions.execute("projectAddOwner", projectId, userId);
         if (result && result.error) {
           return result;
         }
         break;
 
       case "DELETE":
-        const result = await context.functions.execute("projectRemoveOwner", projectId, userId);
+        result = await context.functions.execute("projectRemoveOwner", projectId, userId);
         if (result && result.error) {
           return result;
         }
