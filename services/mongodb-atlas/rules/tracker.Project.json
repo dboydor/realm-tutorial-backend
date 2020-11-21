@@ -1,6 +1,6 @@
 {
-    "database": "tracker",
     "collection": "Project",
+    "database": "tracker",
     "roles": [
         {
             "name": "default",
@@ -13,7 +13,6 @@
     ],
     "schema": {
         "bsonType": "object",
-        "title": "Project",
         "properties": {
             "_id": {
                 "bsonType": "objectId"
@@ -21,10 +20,10 @@
             "_partition": {
                 "bsonType": "string"
             },
-            "ownerId": {
+            "name": {
                 "bsonType": "string"
             },
-            "name": {
+            "ownerId": {
                 "bsonType": "string"
             }
         },
@@ -33,6 +32,7 @@
             "_partition",
             "ownerId",
             "name"
-        ]
+        ],
+        "title": "Project"
     }
 }

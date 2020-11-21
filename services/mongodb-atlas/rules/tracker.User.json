@@ -1,14 +1,6 @@
 {
-    "database": "tracker",
     "collection": "User",
-    "relationships": {
-        "currentTable": {
-          "ref": "#/relationship/mongodb-atlas/tracker/Project",
-          "source_key": "projects.projectId",
-          "foreign_key": "_id",
-          "is_list": false
-        }
-    },
+    "database": "tracker",
     "roles": [
         {
             "name": "default",
@@ -22,6 +14,11 @@
     "schema": {
         "bsonType": "object",
         "title": "User",
+        "required": [
+            "_id",
+            "_partition",
+            "name"
+        ],
         "properties": {
             "_id": {
                 "bsonType": "objectId"
@@ -34,28 +31,23 @@
             },
             "projects": {
                 "bsonType": "array",
-                "title": "ProjectRef",
+                "required": [
+                    "id",
+                    "permission"
+                ],
                 "items": {
                     "bsonType": "object",
-                    "required": [
-                      "projectId",
-                      "permission"
-                    ],
+                    "title": "UserProject",
                     "properties": {
-                        "projectId": {
-                          "bsonType": "objectId"
+                        "id": {
+                            "bsonType": "objectId"
                         },
                         "permission": {
-                          "bsonType": "string"
+                            "bsonType": "string"
                         }
                     }
                 }
             }
-        },
-        "required": [
-            "_id",
-            "_partition",
-            "name"
-        ]
+        }
     }
 }

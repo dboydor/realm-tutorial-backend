@@ -1,6 +1,6 @@
 {
-    "database": "tracker",
     "collection": "Task",
+    "database": "tracker",
     "roles": [
         {
             "name": "default",
@@ -13,7 +13,6 @@
     ],
     "schema": {
         "bsonType": "object",
-        "title": "Task",
         "properties": {
             "_id": {
                 "bsonType": "objectId"
@@ -36,6 +35,7 @@
             "_partition",
             "name",
             "status"
-        ]
+        ],
+        "title": "Task"
     }
 }
