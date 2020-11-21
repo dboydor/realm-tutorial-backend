@@ -1,6 +1,6 @@
 {
-    "collection": "Task",
     "database": "tracker",
+    "collection": "Task",
     "roles": [
         {
             "name": "default",

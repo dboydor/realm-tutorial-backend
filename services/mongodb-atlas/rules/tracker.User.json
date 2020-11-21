@@ -1,6 +1,14 @@
 {
-    "collection": "User",
     "database": "tracker",
+    "collection": "User",
+    "relationships": {
+        "currentTable": {
+          "ref": "#/relationship/mongodb-atlas/tracker/Project",
+          "source_key": "projects.projectId",
+          "foreign_key": "_id",
+          "is_list": false
+        }
+    },
     "roles": [
         {
             "name": "default",
@@ -16,7 +24,7 @@
         "title": "User",
         "properties": {
             "_id": {
-                "bsonType": "string"
+                "bsonType": "objectId"
             },
             "_partition": {
                 "bsonType": "string"
@@ -26,6 +34,7 @@
             },
             "projects": {
                 "bsonType": "array",
+                "title": "ProjectRef",
                 "items": {
                     "bsonType": "object",
                     "required": [

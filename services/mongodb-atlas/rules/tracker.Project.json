@@ -1,6 +1,6 @@
 {
-    "collection": "Project",
     "database": "tracker",
+    "collection": "Project",
     "roles": [
         {
             "name": "default",
