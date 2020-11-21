@@ -15,7 +15,7 @@
         "bsonType": "object",
         "properties": {
             "_id": {
-                "bsonType": "objectId"
+                "bsonType": "string"
             },
             "_partition": {
                 "bsonType": "string"
