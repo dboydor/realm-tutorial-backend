@@ -12,21 +12,21 @@ const task = async function (event) {
   let result;
 
   switch (event.operationType) {
-      case "INSERT":
-        result = await context.functions.execute("projectAddOwner", projectId, userId);
+      case "insert":
+        result = await context.functions.execute("projectAddOwner", project._id, userId);
         if (result && result.error) {
           return result;
         }
         break;
 
-      case "DELETE":
-        result = await context.functions.execute("projectRemoveOwner", projectId, userId);
+      case "delete":
+        result = await context.functions.execute("projectRemoveOwner", project._id, userId);
         if (result && result.error) {
           return result;
         }
         break;
 
-      case "REPLACE":
+      case "replace":
         break;
   }
 };

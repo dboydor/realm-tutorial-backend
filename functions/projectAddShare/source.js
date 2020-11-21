@@ -27,7 +27,7 @@ const task = async function(projectId, shareToEmail, permission) {
   let removePrevious = false;
 
   let addSet = {
-    projects: { projectId: projectId, permission: permission}
+    projects: { id: projectId, permission: permission}
   };
 
   switch (permission) {

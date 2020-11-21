@@ -91,7 +91,7 @@ describe('insert', () => {
     expect(user.partitionsOwn.length).toEqual(0);
     expect(user.partitionsRead.includes(partition)).toEqual(false);
     expect(user.partitionsWrite.includes(partition)).toEqual(true);
-    const found = user.projects.find(project => project.projectId === "user1Project1");
+    const found = user.projects.find(project => project.id === "user1Project1");
     expect(found.permission).toEqual("rw");
   });
 
@@ -106,7 +106,7 @@ describe('insert', () => {
     expect(user.partitionsOwn.length).toEqual(0);
     expect(user.partitionsRead.includes(partition)).toEqual(true);
     expect(user.partitionsWrite.includes(partition)).toEqual(false);
-    const found = user.projects.find(project => project.projectId === "user1Project1");
+    const found = user.projects.find(project => project.id === "user1Project1");
     expect(found.permission).toEqual("r");
   });
 });

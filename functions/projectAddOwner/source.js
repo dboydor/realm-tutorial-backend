@@ -26,7 +26,7 @@ const task = async function(projectId, userId) {
 
   let addSet = {
     partitionsOwn: partition,
-    projects: { projectId: projectId, permission: "o" }
+    projects: { id: projectId, permission: "o" }
   };
 
   try {

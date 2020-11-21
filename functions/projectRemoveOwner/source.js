@@ -29,7 +29,7 @@ const task = async function(projectId, userId) {
       { _id: thisUser._id},
       { $pull: {
           partitionsOwn: projectPartition,
-          projects: { projectId: `${projectId}` }
+          projects: { id: `${projectId}` }
         }
       });
   } catch (error) {

@@ -62,7 +62,7 @@ describe('insert', () => {
     expect(user.partitionsOwn.length).toEqual(0);
     expect(user.partitionsRead.includes(partition)).toEqual(false);
     expect(user.partitionsWrite.length).toEqual(0);
-    const found = user.projects.find(project => project.projectId === "user1Project1");
+    const found = user.projects.find(project => project.id === "user1Project1");
     expect(found).toEqual(undefined);
   });
 
@@ -79,7 +79,7 @@ describe('insert', () => {
     expect(user.partitionsOwn.length).toEqual(0);
     expect(user.partitionsRead.length).toEqual(0);
     expect(user.partitionsWrite.includes(partition)).toEqual(false);
-    const found = user.projects.find(project => project.projectId === "user1Project1");
+    const found = user.projects.find(project => project.id === "user1Project1");
     expect(found).toEqual(undefined);
   });
 });

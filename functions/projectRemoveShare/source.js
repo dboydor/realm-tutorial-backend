@@ -36,7 +36,7 @@ const task = async function(projectId, shareToEmail) {
       { $pull: {
           partitionsRead: projectPartition,
           partitionsWrite: projectPartition,
-          projects: { projectId: `${projectId}` }
+          projects: { id: `${projectId}` }
         }
       });
   } catch (error) {
