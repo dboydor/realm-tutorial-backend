@@ -13,12 +13,6 @@
     ],
     "schema": {
         "bsonType": "object",
-        "title": "User",
-        "required": [
-            "_id",
-            "_partition",
-            "name"
-        ],
         "properties": {
             "_id": {
                 "bsonType": "objectId"
@@ -31,13 +25,8 @@
             },
             "projects": {
                 "bsonType": "array",
-                "required": [
-                    "id",
-                    "permission"
-                ],
                 "items": {
                     "bsonType": "object",
-                    "title": "UserProject",
                     "properties": {
                         "id": {
                             "bsonType": "objectId"
@@ -45,9 +34,20 @@
                         "permission": {
                             "bsonType": "string"
                         }
-                    }
+                    },
+                    "required": [
+                        "id",
+                        "permission"
+                    ],
+                    "title": "UserProject"
                 }
             }
-        }
+        },
+        "required": [
+            "_id",
+            "_partition",
+            "name"
+        ],
+        "title": "User"
     }
 }
