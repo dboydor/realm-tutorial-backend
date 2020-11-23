@@ -17,18 +17,10 @@ const task = async function(projectId, userId) {
     return { error: `User ${userId} was not found` };
   }
 
-  const projectPartition = `project=${project._id}`;
-  const { partitionsOwn } = thisUser;
-
-  if (!partitionsOwn || !partitionsOwn.includes(projectPartition)) {
-    return { error: `Project ${projectId} is not owned by user ${userId}` };
-  }
-
   try {
     return await users.updateOne(
       { _id: thisUser._id},
       { $pull: {
-          partitionsOwn: projectPartition,
           projects: { id: `${projectId}` }
         }
       });

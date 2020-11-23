@@ -20,6 +20,7 @@ const task = async function (event) {
         break;
 
       case "delete":
+        // TODO: Need function to remove this partition from all users it might have been shared with
         result = await context.functions.execute("projectRemoveOwner", project._id, userId);
         if (result && result.error) {
           return result;

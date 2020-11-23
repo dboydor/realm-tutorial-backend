@@ -1,17 +1,21 @@
 // -------------------------------------------------------------------
 //  canWritePartition
 // -------------------------------------------------------------------
-const task = async function(partition) {
+const task = async function (partition) {
   try {
     const thisUser = context.user;
 
+    // If the user id is in the partition, we own it
+    if (partition.indexOf(thisUser.id) != -1) {
+      return true;
+    }
+
     // The user custom data contains a partitionsWrite array that is managed
     // by a system function.
-    const { partitionsOwn, partitionsWrite } = thisUser.custom_data;
+    const { partitionsWrite } = thisUser.custom_data;
 
-    // If the user's partitionsOwn or partitionsWrite array contains the partition, they may write to it
-    return (partitionsOwn && partitionsOwn.includes(partition)) ||
-           (partitionsWrite && partitionsWrite.includes(partition));
+    // If the user's partitionsWrite array contains the partition, they may write to it
+    return partitionsWrite && partitionsWrite.includes(partition);
 
   } catch (error) {
     console.error(error);
