@@ -18,14 +18,14 @@ const task = async function(projectId, userId) {
     return { error: `User ${userId} was not found` };
   }
 
-  if (userToRemove._id === thisUser.id) {
+  if (userToRemove.id === thisUser.id) {
     return { error: "You cannot remove share from yourself" };
   }
 
   const { _projectsShare } = userToRemove.custom_data;
 
-  if (_projectsShare.find(project => project.projectId === projectId) === null) {
-      return { error: `Project ${projectId} was not shared with user ${userToRemove.name}` };
+  if (!_projectsShare.find(project => project.projectId === projectId)) {
+      return { error: `Project ${projectId} was not shared with user ${userToRemove.id}` };
   }
 
   try {

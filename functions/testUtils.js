@@ -66,11 +66,11 @@ module.exports = {
 
   getUser: async (data, userId) => {
     const users = await data.db.collection('User');
-    return await users.findOne({_id: {$eq: userId}})
+    return await users.findOne({ id: {$eq: userId }})
   },
 
   setGlobalUser: async (data, userId) => {
-    context.user.custom_data = await module.exports.getUser(data, userId);
+    context.user = await module.exports.getUser(data, userId);
   },
 
   buildProjects: async (data, userId, count, noLinkUsers) => {
@@ -87,8 +87,8 @@ module.exports = {
            }
         )
 
-        partitions.push({ partition: `user=${userId}`, projectId: projectId, permission: "rw" })
-        projectIds.push({ userId: userId, projectId: projectId, permission: "rw" });
+        partitions.push({ partition: `user=${userId}`, projectId: `project${x}`, permission: "rw" })
+        projectIds.push({ userId: userId, projectId: `project${x}`, permission: "rw" });
     }
 
     const projects = await data.db.collection('Project');
