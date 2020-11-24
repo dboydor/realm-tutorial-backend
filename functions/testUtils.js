@@ -137,7 +137,7 @@ module.exports = {
 
     for (let x = 1; x <= count; x++) {
         share.push({ userId: fromUserId, projectId: `${fromUserId}Project${x}`, permission: permission })
-        projects.push({ id: fromUserId, projectId: `${fromUserId}Project${x}`, permission: permission })
+        projects.push({ userId: fromUserId, projectId: `${fromUserId}Project${x}`, permission: permission })
     }
 
     addSet = {

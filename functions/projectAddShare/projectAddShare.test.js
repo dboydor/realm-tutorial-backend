@@ -14,8 +14,8 @@ describe('insert', () => {
 
     // This function needs access to projectRemoveShare function
     context.functions = {
-        execute: async (func, projectId, shareToEmail) => {
-            await taskRemoveShare(projectId, shareToEmail);
+        execute: async (func, projectId, userId) => {
+            await taskRemoveShare(projectId, userId);
         }
     }
   });
@@ -58,26 +58,22 @@ describe('insert', () => {
     await task("user1Project1", "user2@mail.com", "r");
     const user = await utils.getUser(data, "user2");
 
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(1);
-    expect(user.partitionsWrite.length).toEqual(0);
+    expect(user._projectsShare.length).toEqual(1);
     expect(user.projects.length).toEqual(1);
 
     const result = await task("user1Project1", "user2@mail.com", "r");
-    expect(result.error).toEqual("User user2@mail.com already has read access to project user1Project1");
+    expect(result.error).toEqual("User user2@mail.com already has 'r' access to project user1Project1");
   });
 
   it('should add project as write share', async () => {
     await task("user1Project1", "user2@mail.com", "rw");
     const user = await utils.getUser(data, "user2");
 
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.length).toEqual(1);
+    expect(user._projectsShare.length).toEqual(1);
     expect(user.projects.length).toEqual(1);
 
     const result = await task("user1Project1", "user2@mail.com", "rw");
-    expect(result.error).toEqual("User user2@mail.com already has write access to project user1Project1");
+    expect(result.error).toEqual("User user2@mail.com already has 'rw' access to project user1Project1");
   });
 
   it('should switch project from read share to write share', async () => {
@@ -85,13 +81,12 @@ describe('insert', () => {
 
     await task("user1Project1", "user2@mail.com", "rw");
     const user = await utils.getUser(data, "user2");
+    //console.log(user)
 
-    const partition = `project=user1Project1`;
+    expect(user._projectsShare.length).toEqual(3);
+    expect(user.projects.length).toEqual(3);
 
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.includes(partition)).toEqual(false);
-    expect(user.partitionsWrite.includes(partition)).toEqual(true);
-    const found = user.projects.find(project => project.id === "user1Project1");
+    const found = user.projects.find(project => project.projectId === "user1Project1");
     expect(found.permission).toEqual("rw");
   });
 
@@ -101,12 +96,10 @@ describe('insert', () => {
     await task("user1Project1", "user2@mail.com", "r");
     const user = await utils.getUser(data, "user2");
 
-    const partition = `project=user1Project1`;
+    expect(user._projectsShare.length).toEqual(5);
+    expect(user.projects.length).toEqual(5);
 
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.includes(partition)).toEqual(true);
-    expect(user.partitionsWrite.includes(partition)).toEqual(false);
-    const found = user.projects.find(project => project.id === "user1Project1");
+    const found = user.projects.find(project => project.projectId === "user1Project1");
     expect(found.permission).toEqual("r");
   });
 });

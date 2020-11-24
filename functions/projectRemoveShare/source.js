@@ -33,7 +33,7 @@ const task = async function(projectId, userId) {
         { _id: userToRemove._id},
         { $pull: {
             _projectsShare: { projectId: `${projectId}` },
-            projects: { id: `${projectId}` }
+            projects: { projectId: `${projectId}` }
           }
         });
   } catch (error) {

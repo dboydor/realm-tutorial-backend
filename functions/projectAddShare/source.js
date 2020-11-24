@@ -23,13 +23,13 @@ const task = async function(projectId, shareToEmail, permission) {
         return { error: `You already have access to project ${projectId}` };
     }
 
-    const { _projectsShare } = shareUser.custom_data;
+    const { _projectsShare } = shareUser;
     const alreadyExists = !!_projectsShare.find(project => {
         return project.projectId === projectId && project.permission === permission
     });
 
     if (alreadyExists) {
-        return { error: `User ${shareToEmail} already has ${permission} access to project ${projectId}` };
+        return { error: `User ${shareToEmail} already has '${permission}' access to project ${projectId}` };
     }
 
     let addSet = {
@@ -56,7 +56,7 @@ const task = async function(projectId, shareToEmail, permission) {
         // If this share was already defined with a different permission, remove
         // the old version first
         if (removePrevious) {
-            const result = await context.functions.execute("projectRemoveShare", projectId, shareUser.id);
+            const result = await context.functions.execute("projectRemoveShare", projectId, shareUser._id);
             if (result && result.error) {
                 return result;
             }

@@ -36,8 +36,8 @@ describe('insert', () => {
   });
 
   it('should allow access to partition', async () => {
-    context.user.custom_data.addShare("user=user3", "project2", "r")
-    context.user.custom_data.addShare("user=user2", "project1", "r")
+    context.user.custom_data.addShare("user3", "project2", "r")
+    context.user.custom_data.addShare("user2", "project1", "r")
 
     let result = await task("user=user2");
     expect(result).toEqual(true);
