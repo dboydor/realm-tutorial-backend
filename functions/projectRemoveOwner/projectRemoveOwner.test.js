@@ -3,8 +3,8 @@
 // --------------------------------
 const { MongoClient } = require('mongodb');
 const utils = require('../testUtils.js');
-const task = require('./source.js');
-const taskAddOwner = require('../projectAddOwner/source.js');
+const projectRemoveOwner = require('./source.js');
+const projectAddOwner = require('../projectAddOwner/source.js');
 
 describe('insert', () => {
   let data;
@@ -28,27 +28,27 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should fail with invalid project id', async () => {
-    const result = await task("badProject1", "user1");
+    const result = await projectRemoveOwner("badProject1", "user1");
     expect(result.error).toEqual("Project id badProject1 was not found");
   });
 
   it('should fail with invalid user id', async () => {
-    const result = await task("user1Project1", "user1Bad");
+    const result = await projectRemoveOwner("user1Project1", "user1Bad");
     expect(result.error).toEqual("User user1Bad was not found");
   });
 
   it('should fail with project not owned', async () => {
     const user = await utils.getUser(data, "user2");
 
-    const result = await task("user1Project1", "user2");
+    const result = await projectRemoveOwner("user1Project1", "user2");
     expect(result.error).toEqual("Project user1Project1 is not owned by user user2");
   });
 
   it('should remove project as owner', async () => {
     // Add an owner
-    await taskAddOwner("user1Project1", "user1")
+    await projectAddOwner("user1Project1", "user1")
 
-    const result = await task("user1Project1", "user1");
+    const result = await projectRemoveOwner("user1Project1", "user1");
 
     const user = await utils.getUser(data, "user1");
     // console.log(user)
@@ -59,11 +59,11 @@ describe('insert', () => {
 
   it('should remove project as owner multiple', async () => {
     // Add an owner
-    await taskAddOwner("user1Project1", "user1")
-    await taskAddOwner("user1Project2", "user1")
-    await taskAddOwner("user1Project3", "user1")
+    await projectAddOwner("user1Project1", "user1")
+    await projectAddOwner("user1Project2", "user1")
+    await projectAddOwner("user1Project3", "user1")
 
-    const result = await task("user1Project1", "user1");
+    const result = await projectRemoveOwner("user1Project1", "user1");
 
     const user = await utils.getUser(data, "user1");
     // console.log(user)

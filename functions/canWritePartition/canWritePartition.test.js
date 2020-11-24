@@ -2,7 +2,7 @@
 //  Test for canWritePartition
 // --------------------------------
 const utils = require('../testUtils.js');
-const task = require('./source.js');
+const canWritePartition = require('./source.js');
 
 describe('insert', () => {
   let connection;
@@ -31,7 +31,7 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should not allow access', async () => {
-    const result = await task("user=user2");
+    const result = await canWritePartition("user=user2");
     expect(result).toEqual(false);
   });
 
@@ -39,15 +39,15 @@ describe('insert', () => {
     context.user.custom_data.addShare("user3", "project2", "r")
     context.user.custom_data.addShare("user2", "project1", "r")
 
-    let result = await task("user=user2");
+    let result = await canWritePartition("user=user2");
     expect(result).toEqual(true);
 
-    result = await task("user=user3");
+    result = await canWritePartition("user=user3");
     expect(result).toEqual(true);
   });
 
   it('should allow access to own partition', async () => {
-    const result = await task("user=user1");
+    const result = await canWritePartition("user=user1");
     expect(result).toEqual(true);
   });
 });

@@ -1,8 +1,8 @@
 // --------------------------------
-//  Test for canWritePartition
+//  Test for canReadProject
 // --------------------------------
 const utils = require('../testUtils.js');
-const task = require('./source.js');
+const canReadProject = require('./source.js');
 
 describe('insert', () => {
   let connection;
@@ -31,21 +31,21 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should not allow access', async () => {
-    const result = await task("user=user1");
+    const result = await canReadProject("user=user1");
     expect(result).toEqual(false);
   });
 
   it('should allow access to read project', async () => {
     context.user.custom_data.addShare("user1", "project1", "r")
 
-    const result = await task("project1");
+    const result = await canReadProject("project1");
     expect(result).toEqual(true);
   });
 
   it('should not allow access to write project', async () => {
     context.user.custom_data.addShare("user3", "project2", "rw")
 
-    let result = await task("project2");
+    let result = await canReadProject("project2");
     expect(result).toEqual(false);
   });
 });

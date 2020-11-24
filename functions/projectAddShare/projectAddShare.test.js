@@ -3,8 +3,8 @@
 // -------------------------------------------------------------------
 const { MongoClient } = require('mongodb');
 const utils = require('../testUtils.js');
-const task = require('./source.js');
-const taskRemoveShare = require('../projectRemoveShare/source.js');
+const projectAddShare = require('./source.js');
+const projectRemoveShare = require('../projectRemoveShare/source.js');
 
 describe('insert', () => {
   let data;
@@ -15,7 +15,7 @@ describe('insert', () => {
     // This function needs access to projectRemoveShare function
     context.functions = {
         execute: async (func, projectId, userId) => {
-            await taskRemoveShare(projectId, userId);
+            await projectRemoveShare(projectId, userId);
         }
     }
   });
@@ -35,51 +35,51 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should fail with invalid project id', async () => {
-    const result = await task("badProject1", "user2@mail.com", "r");
+    const result = await projectAddShare("badProject1", "user2@mail.com", "r");
     expect(result.error).toEqual("Project id badProject1 was not found");
   });
 
   it('should fail with invalid user id', async () => {
-    const result = await task("user1Project1", "user2@bad.com", "r");
+    const result = await projectAddShare("user1Project1", "user2@bad.com", "r");
     expect(result.error).toEqual("User user2@bad.com was not found");
   });
 
   it('should fail because user already owns this project', async () => {
-    const result = await task("user1Project1", "user1@mail.com", "r");
+    const result = await projectAddShare("user1Project1", "user1@mail.com", "r");
     expect(result.error).toEqual("You already have access to project user1Project1");
   });
 
   it('should fail because user already owns this project', async () => {
-    const result = await task("user1Project1", "user1@mail.com", "r");
+    const result = await projectAddShare("user1Project1", "user1@mail.com", "r");
     expect(result.error).toEqual("You already have access to project user1Project1");
   });
 
   it('should add project as read share', async () => {
-    await task("user1Project1", "user2@mail.com", "r");
+    await projectAddShare("user1Project1", "user2@mail.com", "r");
     const user = await utils.getUser(data, "user2");
 
     expect(user._projectsShare.length).toEqual(1);
     expect(user.projects.length).toEqual(1);
 
-    const result = await task("user1Project1", "user2@mail.com", "r");
+    const result = await projectAddShare("user1Project1", "user2@mail.com", "r");
     expect(result.error).toEqual("User user2@mail.com already has 'r' access to project user1Project1");
   });
 
   it('should add project as write share', async () => {
-    await task("user1Project1", "user2@mail.com", "rw");
+    await projectAddShare("user1Project1", "user2@mail.com", "rw");
     const user = await utils.getUser(data, "user2");
 
     expect(user._projectsShare.length).toEqual(1);
     expect(user.projects.length).toEqual(1);
 
-    const result = await task("user1Project1", "user2@mail.com", "rw");
+    const result = await projectAddShare("user1Project1", "user2@mail.com", "rw");
     expect(result.error).toEqual("User user2@mail.com already has 'rw' access to project user1Project1");
   });
 
   it('should switch project from read share to write share', async () => {
     await utils.addProjects(data, "user1", 3, "r", "user2")
 
-    await task("user1Project1", "user2@mail.com", "rw");
+    await projectAddShare("user1Project1", "user2@mail.com", "rw");
     const user = await utils.getUser(data, "user2");
     //console.log(user)
 
@@ -93,7 +93,7 @@ describe('insert', () => {
   it('should switch project from write share to read share', async () => {
     await utils.addProjects(data, "user1", 5, "rw", "user2")
 
-    await task("user1Project1", "user2@mail.com", "r");
+    await projectAddShare("user1Project1", "user2@mail.com", "r");
     const user = await utils.getUser(data, "user2");
 
     expect(user._projectsShare.length).toEqual(5);

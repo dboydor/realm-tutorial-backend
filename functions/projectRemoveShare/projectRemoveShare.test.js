@@ -3,7 +3,7 @@
 // --------------------------------
 const { MongoClient } = require('mongodb');
 const utils = require('../testUtils.js');
-const task = require('./source.js');
+const projectRemoveShare = require('./source.js');
 
 describe('insert', () => {
   let data;
@@ -27,24 +27,24 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should fail with invalid project id', async () => {
-    const result = await task("project1Bad", "user2");
+    const result = await projectRemoveShare("project1Bad", "user2");
     expect(result.error).toEqual("Project id project1Bad was not found");
   });
 
   it('should fail with invalid user id', async () => {
-    const result = await task("user1Project1", "userBad");
+    const result = await projectRemoveShare("user1Project1", "userBad");
     expect(result.error).toEqual("User userBad was not found");
   });
 
   it('should fail because user already owns this project', async () => {
-    const result = await task("user1Project1", "user1");
+    const result = await projectRemoveShare("user1Project1", "user1");
     expect(result.error).toEqual("You cannot remove share from yourself");
   });
 
   it('should fail because user already owns this project', async () => {
     //console.log(await utils.getUser(data, "user2"))
 
-    const result = await task("user1Project1", "user2");
+    const result = await projectRemoveShare("user1Project1", "user2");
     expect(result.error).toEqual("Project user1Project1 was not shared with user user2");
   });
 
@@ -52,7 +52,7 @@ describe('insert', () => {
     await utils.addProjects(data, "user1", 3, "r", "user2")
     //await utils.addProjects(data, "user1", 5, "rw", "user3")
 
-    const result = await task("user1Project1", "user2");
+    const result = await projectRemoveShare("user1Project1", "user2");
 
     const user = await utils.getUser(data, "user2");
     // console.log(user)

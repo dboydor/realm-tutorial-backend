@@ -2,7 +2,7 @@
 //  Test for projectGetShare
 // --------------------------------
 const utils = require('../testUtils.js');
-const task = require('./source.js');
+const projectGetShare = require('./source.js');
 
 describe('insert', () => {
   let data;
@@ -25,7 +25,7 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should not return projects', async () => {
-      const result = await task();
+      const result = await projectGetShare();
       expect(result.length).toEqual(0);
   });
 
@@ -40,7 +40,7 @@ describe('insert', () => {
       // console.log(await utils.getUser("user2"))
       // console.log(await utils.getUser("user3"))
 
-      const result = await task();
+      const result = await projectGetShare();
       // console.log(result)
 
       expect(result.length).toEqual(8);
