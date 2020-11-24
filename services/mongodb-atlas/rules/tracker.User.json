@@ -32,7 +32,10 @@
                 "items": {
                     "bsonType": "object",
                     "properties": {
-                        "id": {
+                        "userId": {
+                            "bsonType": "objectId"
+                        },
+                        "projectId": {
                             "bsonType": "objectId"
                         },
                         "permission": {
@@ -40,7 +43,8 @@
                         }
                     },
                     "required": [
-                        "id",
+                        "userId",
+                        "projectId",
                         "permission"
                     ],
                     "title": "UserProject"
