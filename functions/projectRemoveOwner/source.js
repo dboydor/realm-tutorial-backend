@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  projectRemoveShare
+//  projectRemoveOwner
 // -------------------------------------------------------------------
 const task = async function(projectId, userId) {
   const cluster = context.services.get("mongodb-atlas");
@@ -17,13 +17,18 @@ const task = async function(projectId, userId) {
       return { error: `User ${userId} was not found` };
   }
 
+  if (project.ownerId !== thisUser._id) {
+      return { error: `Project ${projectId} is not owned by user ${userId}` };
+  }
+
   try {
       return await users.updateOne(
-        { _id: thisUser.id},
+        { _id: thisUser._id},
         { $pull: {
             projects: { projectId: `${projectId}` }
           }
-        });
+        }
+      );
   } catch (error) {
       return { error: error.toString() };
   }

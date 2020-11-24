@@ -38,8 +38,10 @@ describe('insert', () => {
   });
 
   it('should fail with project not owned', async () => {
-    const result = await task("user1Project1", "user1");
-    expect(result.error).toEqual("Project user1Project1 is not owned by user user1");
+    const user = await utils.getUser(data, "user2");
+
+    const result = await task("user1Project1", "user2");
+    expect(result.error).toEqual("Project user1Project1 is not owned by user user2");
   });
 
   it('should remove project as owner', async () => {
@@ -49,11 +51,9 @@ describe('insert', () => {
     const result = await task("user1Project1", "user1");
 
     const user = await utils.getUser(data, "user1");
-    console.log(user)
+    // console.log(user)
 
-    expect(user.partitionsOwn.length).toEqual(0);
-    expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.length).toEqual(0);
+    expect(user._projectsShare.length).toEqual(0);
     expect(user.projects.length).toEqual(0);
   });
 
@@ -68,9 +68,7 @@ describe('insert', () => {
     const user = await utils.getUser(data, "user1");
     // console.log(user)
 
-    expect(user.partitionsOwn.length).toEqual(2);
-    expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.length).toEqual(0);
+    expect(user._projectsShare.length).toEqual(0);
     expect(user.projects.length).toEqual(2);
   });
 });
