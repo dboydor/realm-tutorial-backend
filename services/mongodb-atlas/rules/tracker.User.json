@@ -32,13 +32,13 @@
                 "items": {
                     "bsonType": "object",
                     "properties": {
-                        "userId": {
-                            "bsonType": "objectId"
+                        "permission": {
+                            "bsonType": "string"
                         },
                         "projectId": {
                             "bsonType": "objectId"
                         },
-                        "permission": {
+                        "userId": {
                             "bsonType": "string"
                         }
                     },
