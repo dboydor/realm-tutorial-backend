@@ -42,7 +42,7 @@ describe('insert', () => {
   });
 
   it('should fail because user already owns this project', async () => {
-    // console.log(await utils.getUser(data, "user2"))
+    //console.log(await utils.getUser(data, "user2"))
 
     const result = await task("user1Project1", "user2");
     expect(result.error).toEqual("Project user1Project1 was not shared with user user2");
@@ -57,10 +57,8 @@ describe('insert', () => {
     const user = await utils.getUser(data, "user2");
     // console.log(user)
 
-    const partition = `project=user1Project1`;
-
-    expect(user.custom_data._projectsShare.length).toEqual(0);
-    const found = user.custom_data.projects.find(project => project.id === "user1Project1");
+    expect(user._projectsShare.length).toEqual(2);
+    const found = user.projects.find(project => project.id === "user1Project1");
     expect(found).toEqual(undefined);
   });
 });

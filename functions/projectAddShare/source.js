@@ -23,10 +23,6 @@ const task = async function(projectId, shareToEmail, permission) {
         return { error: `You already have access to project ${projectId}` };
     }
 
-    if (shareUser.partitionsRead && shareUser.partitionsRead.includes(partition)) {
-        return { error: `User ${shareToEmail} already has read access to project ${projectId}` };
-    }
-
     const { _projectsShare } = shareUser.custom_data;
     const alreadyExists = !!_projectsShare.find(project => {
         return project.projectId === projectId && project.permission === permission
@@ -36,11 +32,9 @@ const task = async function(projectId, shareToEmail, permission) {
         return { error: `User ${shareToEmail} already has ${permission} access to project ${projectId}` };
     }
 
-    const partition = `user=${thisUser.id}`;
-
     let addSet = {
         _projectsShare: {
-            partition: partition,
+            userId: thisUser.id,
             projectId: projectId,
             permission: permission
         },

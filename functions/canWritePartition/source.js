@@ -10,11 +10,11 @@ const task = async function (partition) {
           return true;
       }
 
-      // The user custom data contains a partitionsWrite array that is managed
+      // The user custom data contains a projects share array that is managed
       // by a system function.
       const { _projectsShare } = thisUser.custom_data;
 
-      return !!_projectsShare.find(project => project.partition === partition
+      return !!_projectsShare.find(project => partition === `user=${project.userId}`)
   } catch (error) {
       console.error(error);
       return false;

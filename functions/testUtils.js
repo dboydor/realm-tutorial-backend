@@ -46,8 +46,8 @@ module.exports = {
         projects: []
       }
 
-      user.addShare = (function (partition, projectId, permission) {
-          this._projectsShare.push({ partition: partition, projectId: projectId, permission: permission })
+      user.addShare = (function (userId, projectId, permission) {
+          this._projectsShare.push({ userId: userId, projectId: projectId, permission: permission })
       }).bind(user);
 
       return user;
@@ -70,7 +70,7 @@ module.exports = {
   },
 
   setGlobalUser: async (data, userId) => {
-    context.user = await module.exports.getUser(data, userId);
+    context.user.custom_data = await module.exports.getUser(data, userId);
   },
 
   buildProjects: async (data, userId, count, noLinkUsers) => {
@@ -98,7 +98,6 @@ module.exports = {
     if (!noLinkUsers) {
       let addSet = {
           projects: { $each: projectIds },
-          partitionsOwn: { $each: partitions },
       }
 
       const users = await data.db.collection('User');
@@ -114,14 +113,13 @@ module.exports = {
 
   addProjects: async (data, fromUserId, count, permission, toUserId) => {
     const users = await data.db.collection('User');
-    let partitions = [];
     let projects = [];
 
     // Add this project to fromUser
     for (let x = 1; x <= count; x++) {
         // In-memory instance
-        context.user.custom_data.projects.push({ userId: fromUserId, projectId: "project" + x, permission: "o" })
-        projects.push({ userId: fromUserId, projectId: "project" + x, permission: "o" })
+        context.user.custom_data.projects.push({ userId: fromUserId, projectId: `${fromUserId}Project${x}`, permission: "o" })
+        projects.push({ userId: fromUserId, projectId: `${fromUserId}Project${x}`, permission: "o" })
     }
 
     let addSet = {
@@ -134,16 +132,16 @@ module.exports = {
     )
 
     // Now add to the toUser
-    partitions.length = 0;
+    let share = [];
     projects.length = 0;
 
     for (let x = 1; x <= count; x++) {
-        partitions.push({ partition: `user=${fromUserId}`, projectId: "project" + x, permission: permission })
-        projects.push({ id: fromUserId, projectId: "project" + x, permission: permission })
+        share.push({ userId: fromUserId, projectId: `${fromUserId}Project${x}`, permission: permission })
+        projects.push({ id: fromUserId, projectId: `${fromUserId}Project${x}`, permission: permission })
     }
 
     addSet = {
-        _projectsShare: { $each: partitions },
+        _projectsShare: { $each: share },
         projects: { $each: projects },
     }
 
