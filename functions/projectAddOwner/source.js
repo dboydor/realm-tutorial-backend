@@ -18,6 +18,10 @@ const task = async function(projectId, userId) {
       return { error: `User ${userId} was not found` };
   }
 
+  if (thisUser.projects.find(project => project.projectId === projectId)) {
+      return { error: `User ${userId} already owner of project ${projectId}`};
+  }
+
   let addSet = {
       projects: { userId: userId, projectId: projectId, permission: "o" }
   };
@@ -25,7 +29,7 @@ const task = async function(projectId, userId) {
   try {
       // Update the user, indicating that he owns this project
       return await users.updateOne(
-        { _id: thisUser._id },
+        { id: thisUser.id },
         { $addToSet: addSet },
       );
   } catch (error) {

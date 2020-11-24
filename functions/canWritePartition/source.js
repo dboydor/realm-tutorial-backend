@@ -14,7 +14,7 @@ const task = async function (partition) {
       // by a system function.
       const { _projectsShare } = thisUser.custom_data;
 
-      return _projectsShare.find(project => project.partition === partition) != null
+      return !!_projectsShare.find(project => project.partition === partition
   } catch (error) {
       console.error(error);
       return false;

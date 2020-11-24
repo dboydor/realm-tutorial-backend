@@ -47,15 +47,13 @@ describe('insert', () => {
   it('should add project to owner', async () => {
     await task("user1Project1", "user1");
     const user = await utils.getUser(data, "user1");
+    // console.log(user)
 
     const partition = `project=user1Project1`;
 
-    expect(user.partitionsOwn.length).toEqual(1);
-    expect(user.partitionsOwn.includes(partition)).toEqual(true);
-    expect(user.partitionsRead.length).toEqual(0);
-    expect(user.partitionsWrite.length).toEqual(0);
+    expect(user._projectsShare.length).toEqual(0);
     expect(user.projects.length).toEqual(1);
-    const found = user.projects.find(project => project.id === "user1Project1");
+    const found = user.projects.find(project => project.projectId === "user1Project1");
     expect(found.permission).toEqual("o");
 
     const result = await task("user1Project1", "user1");

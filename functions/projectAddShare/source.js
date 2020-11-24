@@ -28,9 +28,9 @@ const task = async function(projectId, shareToEmail, permission) {
     }
 
     const { _projectsShare } = shareUser.custom_data;
-    const alreadyExists = _projectsShare.find(project => {
+    const alreadyExists = !!_projectsShare.find(project => {
         return project.projectId === projectId && project.permission === permission
-    }) != null;
+    });
 
     if (alreadyExists) {
         return { error: `User ${shareToEmail} already has ${permission} access to project ${projectId}` };
@@ -54,9 +54,9 @@ const task = async function(projectId, shareToEmail, permission) {
     const permissionOpposite = permission == "rw" ? "r" : "rw"
 
     // Project share permission is being changed
-    const removePrevious = _projectsShare.find(project => {
+    const removePrevious = !!_projectsShare.find(project => {
         return project.projectId === projectId && project.permission === permissionOpposite;
-    }) != null;
+    });
 
     try {
         // If this share was already defined with a different permission, remove

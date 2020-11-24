@@ -13,7 +13,7 @@ const task = async function(projectId, userId) {
     return { error: `Project id ${projectId} was not found` };
   }
 
-  const userToRemove = await users.findOne({ id: userId });
+  const userToRemove = await users.findOne({ _id: userId });
   if (userToRemove == null) {
     return { error: `User ${userId} was not found` };
   }

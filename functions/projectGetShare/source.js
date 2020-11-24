@@ -1,6 +1,8 @@
 // -------------------------------------------------------------------
 //  projectGetShared
 //
+//  Finds all this users projects shared with other users
+//
 //  Returns array with following values:
 //     { name, projectId, permission }
 // -------------------------------------------------------------------

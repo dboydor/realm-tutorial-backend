@@ -9,9 +9,9 @@ const task = async function (projectId) {
       // by a system function.
       const { _projectsShare } = thisUser.custom_data;
 
-      return _projectsShare.find(project => {
+      return !!_projectsShare.find(project => {
           return project.projectId === projectId && project.permission === "rw"
-      }) != null
+      })
   } catch (error) {
       console.error(error);
       return false;

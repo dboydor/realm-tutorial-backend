@@ -13,7 +13,10 @@ module.exports = {
 
     let context = {
       services: {},
-      user: module.exports.createUser("user1")
+      user: {
+        id: "user1",
+        custom_data: module.exports.createUser("user1")
+      }
     }
 
     global.context = context;
@@ -36,18 +39,15 @@ module.exports = {
 
   createUser: (id) => {
       let user = {
-        id: id,
-        custom_data: {
-          _id: id,
-          _partition: `user=${id}`,
-          _projectsShare: [],
-          name: `${id}@mail.com`,
-          projects: []
-        }
+        _id: id,
+        _partition: `user=${id}`,
+        _projectsShare: [],
+        name: `${id}@mail.com`,
+        projects: []
       }
 
       user.addShare = (function (partition, projectId, permission) {
-          this.custom_data._projectsShare.push({ partition: partition, projectId: projectId, permission: permission })
+          this._projectsShare.push({ partition: partition, projectId: projectId, permission: permission })
       }).bind(user);
 
       return user;
@@ -66,7 +66,7 @@ module.exports = {
 
   getUser: async (data, userId) => {
     const users = await data.db.collection('User');
-    return await users.findOne({ id: {$eq: userId }})
+    return await users.findOne({ _id: {$eq: userId }})
   },
 
   setGlobalUser: async (data, userId) => {

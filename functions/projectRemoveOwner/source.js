@@ -19,7 +19,7 @@ const task = async function(projectId, userId) {
 
   try {
       return await users.updateOne(
-        { _id: thisUser._id},
+        { _id: thisUser.id},
         { $pull: {
             projects: { projectId: `${projectId}` }
           }
