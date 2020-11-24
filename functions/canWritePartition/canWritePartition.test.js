@@ -1,6 +1,7 @@
 // --------------------------------
 //  Test for canWritePartition
 // --------------------------------
+const utils = require('../testUtils.js');
 const task = require('./source.js');
 
 describe('insert', () => {
@@ -19,14 +20,7 @@ describe('insert', () => {
   });
 
   beforeEach(async () => {
-      context.user = {
-        id: "user1",
-        custom_data: {
-          _id: 'user1',
-          _partition: 'user=user1',
-          _projectsOwn: [],
-          name: 'user1@mail.com',
-        }}
+      context.user = utils.createUser("user1")
   });
 
   // ---------------------------------------
@@ -34,42 +28,23 @@ describe('insert', () => {
   // ---------------------------------------
 
   it('should not allow access', async () => {
-    const result = await task("project=user1Project1");
+    const result = await task("user=user2");
     expect(result).toEqual(false);
   });
 
-  it('should not allow access to read partition', async () => {
-    context.user.custom_data.partitionsRead.push("project=user1Project1")
+  it('should allow access to partition', async () => {
+    context.user.addShare("user=user3", "project2", "r")
+    context.user.addShare("user=user2", "project1", "r")
 
-    const result = await task("project=user1Project1");
-    expect(result).toEqual(false);
-  });
-
-  it('should allow access to write partition', async () => {
-    context.user.custom_data.partitionsWrite.push("project=user1Project1")
-    context.user.custom_data.partitionsWrite.push("project=user1Project2")
-
-    let result = await task("project=user1Project1");
+    let result = await task("user=user2");
     expect(result).toEqual(true);
 
-    result = await task("project=user1Project2");
+    result = await task("user=user3");
     expect(result).toEqual(true);
-
-    result = await task("project=user1Project3");
-    expect(result).toEqual(false);
   });
 
   it('should allow access to own partition', async () => {
-    context.user.custom_data.partitionsOwn.push("project=user1Project1")
-    context.user.custom_data.partitionsOwn.push("project=user1Project2")
-
-    let result = await task("project=user1Project1");
+    const result = await task("user=user1");
     expect(result).toEqual(true);
-
-    result = await task("project=user1Project2");
-    expect(result).toEqual(true);
-
-    result = await task("project=user1Project3");
-    expect(result).toEqual(false);
   });
 });

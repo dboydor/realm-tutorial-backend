@@ -13,16 +13,7 @@ module.exports = {
 
     let context = {
       services: {},
-      user: {
-        id: "user1",
-        custom_data: {
-          _id: 'user1',
-          _partition: 'user=user1',
-          _projectsOwn: [],
-          name: 'user1@mail.com',
-          projects: []
-        }
-      }
+      user: module.exports.createUser("user1")
     }
 
     global.context = context;
@@ -43,17 +34,29 @@ module.exports = {
     await data.db.close();
   },
 
+  createUser: (id) => {
+      let user = {
+        id: id,
+        custom_data: {
+          _id: id,
+          _partition: `user=${id}`,
+          _projectsShare: [],
+          name: `${id}@mail.com`,
+          projects: []
+        }
+      }
+
+      user.addShare = (function (partition, projectId, permission) {
+          this.custom_data._projectsShare.push({ partition: partition, projectId: projectId, permission: permission })
+      }).bind(user);
+
+      return user;
+  },
+
   buildUsers: async (data, count) => {
     const list = [];
     for (var x = 1; x <= count; x++) {
-        list.push(
-          { _id: `user${x}`,
-            _partition: `user=user${x}`,
-            _projectsOwn: [],
-             name: `user${x}@mail.com`,
-             projects: []
-           }
-        )
+        list.push(module.exports.createUser(`user${x}`))
     }
 
     const users = data.db.collection('User');
