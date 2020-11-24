@@ -49,8 +49,6 @@ describe('insert', () => {
     const user = await utils.getUser(data, "user1");
     // console.log(user)
 
-    const partition = `project=user1Project1`;
-
     expect(user._projectsShare.length).toEqual(0);
     expect(user.projects.length).toEqual(1);
     const found = user.projects.find(project => project.projectId === "user1Project1");

@@ -3,16 +3,16 @@
 // -------------------------------------------------------------------
 const task = async function (partition) {
   try {
-      const thisUser = context.user;
+      const thisUser = context.user.custom_data;
 
       // If the user id is in the partition, we own it
-      if (partition.indexOf(thisUser.id) != -1) {
+      if (partition.indexOf(thisUser._id) != -1) {
           return true;
       }
 
       // The user custom data contains a projects share array that is managed
       // by a system function.
-      const { _projectsShare } = thisUser.custom_data;
+      const { _projectsShare } = thisUser;
 
       return !!_projectsShare.find(project => partition === `user=${project.userId}`)
   } catch (error) {

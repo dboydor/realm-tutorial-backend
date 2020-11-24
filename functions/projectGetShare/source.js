@@ -9,10 +9,10 @@
 const task = async function() {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
-  const thisUser = context.user;
+  const thisUser = context.user.custom_data;
 
   const conditions = [
-      { _id: { $ne: thisUser.id }}, // ...is not me
+      { _id: { $ne: thisUser._id }}, // ...is not me
   ]
 
   let result = await users.aggregate(

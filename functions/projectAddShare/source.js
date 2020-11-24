@@ -5,7 +5,7 @@ const task = async function(projectId, shareToEmail, permission) {
     const cluster = context.services.get("mongodb-atlas");
     const users = cluster.db("tracker").collection("User");
     const projects = cluster.db("tracker").collection("Project");
-    const thisUser = context.user;
+    const thisUser = context.user.custom_data;
 
     // Find project to add
     const project = await projects.findOne({ _id: projectId });
@@ -19,7 +19,7 @@ const task = async function(projectId, shareToEmail, permission) {
         return { error: `User ${shareToEmail} was not found` };
     }
 
-    if (shareUser._id === thisUser.id) {
+    if (shareUser._id === thisUser._id) {
         return { error: `You already have access to project ${projectId}` };
     }
 
@@ -34,12 +34,12 @@ const task = async function(projectId, shareToEmail, permission) {
 
     let addSet = {
         _projectsShare: {
-            userId: thisUser.id,
+            userId: thisUser._id,
             projectId: projectId,
             permission: permission
         },
         projects: {
-            userId: thisUser.id,
+            userId: thisUser._id,
             projectId: projectId,
             permission: permission
         }

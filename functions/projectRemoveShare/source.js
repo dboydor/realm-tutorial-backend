@@ -5,7 +5,7 @@ const task = async function(projectId, userId) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
-  const thisUser = context.user;
+  const thisUser = context.user.custom_data;
 
   // Find project to remove
   const project = await projects.findOne({ _id: projectId });
@@ -18,7 +18,7 @@ const task = async function(projectId, userId) {
     return { error: `User ${userId} was not found` };
   }
 
-  if (userToRemove._id === thisUser.id) {
+  if (userToRemove._id === thisUser._id) {
     return { error: "You cannot remove share from yourself" };
   }
 

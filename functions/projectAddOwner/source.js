@@ -29,7 +29,7 @@ const task = async function(projectId, userId) {
   try {
       // Update the user, indicating that he owns this project
       return await users.updateOne(
-        { id: thisUser.id },
+        { _id: thisUser._id },
         { $addToSet: addSet },
       );
   } catch (error) {
