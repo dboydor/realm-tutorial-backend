@@ -13,14 +13,7 @@
                 "required": true,
                 "permissions": {
                     "read": {
-                        "%%true": {
-                            "%function": {
-                                "arguments": [
-                                    "%%partition"
-                                ],
-                                "name": "canReadPartition"
-                            }
-                        }
+                        "%%true": true
                     },
                     "write": {
                         "%%true": {

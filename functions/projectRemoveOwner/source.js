@@ -9,23 +9,23 @@ const task = async function(projectId, userId) {
   // Find project to remove
   const project = await projects.findOne({ _id: projectId });
   if (!project) {
-    return { error: `Project id ${projectId} was not found` };
+      return { error: `Project id ${projectId} was not found` };
   }
 
   const thisUser = await users.findOne({ _id: userId });
   if (thisUser == null) {
-    return { error: `User ${userId} was not found` };
+      return { error: `User ${userId} was not found` };
   }
 
   try {
-    return await users.updateOne(
-      { _id: thisUser._id},
-      { $pull: {
-          projects: { id: `${projectId}` }
-        }
-      });
+      return await users.updateOne(
+        { _id: thisUser._id},
+        { $pull: {
+            projects: { projectId: `${projectId}` }
+          }
+        });
   } catch (error) {
-    return { error: error.toString() };
+      return { error: error.toString() };
   }
 };
 

@@ -3,8 +3,12 @@
     "database": "tracker",
     "roles": [
         {
-            "name": "default",
-            "apply_when": {},
+            "name": "owner",
+            "apply_when": {
+                "%%root.id": "%%user.id"
+            },
+            "read": true,
+            "write": true,
             "insert": true,
             "delete": true,
             "search": true,

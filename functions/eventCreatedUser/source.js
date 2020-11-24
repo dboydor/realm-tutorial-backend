@@ -10,9 +10,8 @@ const task = async function ({user}) {
   return users.insertOne({
     _id: user.id,
     _partition: `user=${user.id}`,
+    _projectsShare: [],
     name: user.data.email,
-    partitionsRead: [],
-    partitionsWrite: [],
     projects: [],
   });
 };

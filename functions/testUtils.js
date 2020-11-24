@@ -18,6 +18,7 @@ module.exports = {
         custom_data: {
           _id: 'user1',
           _partition: 'user=user1',
+          _projectsOwn: [],
           name: 'user1@mail.com',
           projects: []
         }
@@ -48,9 +49,7 @@ module.exports = {
         list.push(
           { _id: `user${x}`,
             _partition: `user=user${x}`,
-             partitionsOwn: [],
-             partitionsRead: [],
-             partitionsWrite: [],
+            _projectsOwn: [],
              name: `user${x}@mail.com`,
              projects: []
            }
@@ -79,14 +78,14 @@ module.exports = {
     for (var x = 1; x <= count; x++) {
         list.push(
           { _id: `${userId}Project${x}`,
-            _partition: `project=${userId}Project${x}`,
+            _partition: `user=${userId}`,
             ownerId: userId,
             name: `Project #${x}`,
            }
         )
 
-        partitions.push(`project=${userId}Project${x}`)
-        projectIds.push({ projectId: `${userId}Project${x}`, permission: "rw" });
+        partitions.push({ partition: `user=${userId}`, projectId: projectId, permission: "rw" })
+        projectIds.push({ userId: userId, projectId: projectId, permission: "rw" });
     }
 
     const projects = await data.db.collection('Project');
@@ -118,16 +117,12 @@ module.exports = {
     // Add this project to fromUser
     for (let x = 1; x <= count; x++) {
         // In-memory instance
-        context.user.custom_data.partitionsOwn.push("project=" + fromUserId + "Project" + x)
-        context.user.custom_data.projects.push({ projectId: fromUserId + "Project" + x, permission: "o" })
-
-        partitions.push("project=" + fromUserId + "Project" + x)
-        projects.push({ projectId: fromUserId + "Project" + x, permission: "o" })
+        context.user.custom_data.projects.push({ userId: fromUserId, projectId: "project" + x, permission: "o" })
+        projects.push({ userId: fromUserId, projectId: "project" + x, permission: "o" })
     }
 
     let addSet = {
         projects: { $each: projects },
-        partitionsOwn: { $each: partitions },
     }
 
     await users.updateOne(
@@ -140,23 +135,18 @@ module.exports = {
     projects.length = 0;
 
     for (let x = 1; x <= count; x++) {
-        partitions.push("project=" + fromUserId + "Project" + x)
-        projects.push({ projectId: fromUserId + "Project" + x, permission: permission })
+        partitions.push({ partition: `user=${fromUserId}`, projectId: "project" + x, permission: permission })
+        projects.push({ id: fromUserId, projectId: "project" + x, permission: permission })
     }
 
     addSet = {
+        _projectsShare: { $each: partitions },
         projects: { $each: projects },
     }
 
-    if (permission == "r") {
-        addSet.partitionsRead = { $each: partitions };
-    } else {
-        addSet.partitionsWrite = { $each: partitions };
-    }
-
     await users.updateOne(
-      {_id: { $eq: toUserId }},
-      { $addToSet: addSet },
+        {_id: { $eq: toUserId }},
+        { $addToSet: addSet },
     )
   }
 };

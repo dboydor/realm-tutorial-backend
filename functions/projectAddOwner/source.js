@@ -9,27 +9,27 @@ const task = async function(projectId, userId) {
   // Find project to add
   const project = await projects.findOne({ _id: projectId });
   if (!project) {
-    return { error: `Project id ${projectId} was not found` };
+      return { error: `Project id ${projectId} was not found` };
   }
 
   // Find user to add
   const thisUser = await users.findOne({ _id: userId });
   if (thisUser == null) {
-    return { error: `User ${userId} was not found` };
+      return { error: `User ${userId} was not found` };
   }
 
   let addSet = {
-    projects: { id: projectId, permission: "o" }
+      projects: { userId: userId, projectId: projectId, permission: "o" }
   };
 
   try {
-    // Update the user, indicating that he owns this project
-    return await users.updateOne(
-      { _id: thisUser._id },
-      { $addToSet: addSet },
-    );
+      // Update the user, indicating that he owns this project
+      return await users.updateOne(
+        { _id: thisUser._id },
+        { $addToSet: addSet },
+      );
   } catch (error) {
-    return { error: error.toString() };
+      return { error: error.toString() };
   }
 };
 

@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------
 //  projectRemoveShare
 // -------------------------------------------------------------------
-const task = async function(projectId, shareToEmail) {
+const task = async function(projectId, userId) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -13,34 +13,31 @@ const task = async function(projectId, shareToEmail) {
     return { error: `Project id ${projectId} was not found` };
   }
 
-  const userToRemove = await users.findOne({ name: shareToEmail });
+  const userToRemove = await users.findOne({ id: userId });
   if (userToRemove == null) {
-    return { error: `User ${shareToEmail} was not found` };
+    return { error: `User ${userId} was not found` };
   }
 
   if (userToRemove._id === thisUser.id) {
     return { error: "You cannot remove share from yourself" };
   }
 
-  const projectPartition = `project=${project._id}`;
-  const { partitionsRead, partitionsWrite } = userToRemove;
+  const { _projectsShare } = userToRemove.custom_data;
 
-  if (   (!partitionsRead || !partitionsRead.includes(projectPartition))
-      && (!partitionsWrite || !partitionsWrite.includes(projectPartition))) {
-    return { error: `Project ${projectId} was not shared with user ${shareToEmail}` };
+  if (_projectsShare.find(project => project.projectId === projectId) === null) {
+      return { error: `Project ${projectId} was not shared with user ${userToRemove.name}` };
   }
 
   try {
-    return await users.updateOne(
-      { _id: userToRemove._id},
-      { $pull: {
-          partitionsRead: projectPartition,
-          partitionsWrite: projectPartition,
-          projects: { id: `${projectId}` }
-        }
-      });
+      return await users.updateOne(
+        { _id: userToRemove._id},
+        { $pull: {
+            _projectsShare: { projectId: `${projectId}` },
+            projects: { id: `${projectId}` }
+          }
+        });
   } catch (error) {
-    return { error: error.toString() };
+      return { error: error.toString() };
   }
 };
 

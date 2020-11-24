@@ -3,10 +3,48 @@
     "database": "tracker",
     "roles": [
         {
-            "name": "default",
-            "apply_when": {},
+            "name": "owner",
+            "apply_when": {
+                "ownerId": "%%user.id"
+            },
+            "read": true,
+            "write": true,
             "insert": true,
             "delete": true,
+            "search": true,
+            "additional_fields": {}
+        },
+        {
+            "name": "sharedWrite",
+            "apply_when": {
+              "%%true": {
+                "%function": {
+                  "name": "canWriteProject",
+                  "arguments": ["%%root._id"]
+                }
+              }
+            },
+            "read": true,
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        },
+        {
+            "name": "sharedRead",
+            "apply_when": {
+              "%%true": {
+                "%function": {
+                  "name": "canReadProject",
+                  "arguments": ["%%root._id"]
+                }
+              }
+            },
+            "read": true,
+            "write": false,
+            "insert": false,
+            "delete": false,
             "search": true,
             "additional_fields": {}
         }
@@ -23,7 +61,7 @@
             "name": {
                 "bsonType": "string"
             },
-            "owner": {
+            "ownerId": {
                 "bsonType": "string"
             },
             "status": {

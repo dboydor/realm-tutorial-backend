@@ -13,22 +13,22 @@ const task = async function (event) {
 
   switch (event.operationType) {
       case "insert":
-        result = await context.functions.execute("projectAddOwner", project._id, userId);
-        if (result && result.error) {
-          return result;
-        }
-        break;
+          result = await context.functions.execute("projectAddOwner", project._id, userId);
+          if (result && result.error) {
+            return result;
+          }
+          break;
 
       case "delete":
-        // TODO: Need function to remove this partition from all users it might have been shared with
-        result = await context.functions.execute("projectRemoveOwner", project._id, userId);
-        if (result && result.error) {
-          return result;
-        }
-        break;
+          // TODO: Need function to remove this partition from all users it might have been shared with
+          result = await context.functions.execute("projectRemoveOwner", project._id, userId);
+          if (result && result.error) {
+            return result;
+          }
+          break;
 
       case "replace":
-        break;
+          break;
   }
 };
 

@@ -1,5 +1,5 @@
 {
-    "name": "canWritePartition",
+    "name": "canWriteProject",
     "private": true,
     "run_as_system": true
 }
