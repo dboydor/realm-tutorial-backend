@@ -6,7 +6,7 @@
 //  Returns array with following values:
 //     { name, projectId, permission }
 // -------------------------------------------------------------------
-const task = async function() {
+const task = async function(projectId) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const thisUser = context.user.custom_data;
@@ -16,20 +16,22 @@ const task = async function() {
   ]
 
   let result = await users.aggregate([
-    { $unwind: "$_projectsShare" }, // One row for each project share
     { $match: { $and: conditions }},
     { $project: {
           name: 1,
           _projectsShare: 1
        }
     },
+    { $unwind: "$_projectsShare" }, // One row for each project share
   ])
   .toArray();
 
   // Flatten result
-  return result.map((row) => {
-      return { name: row.name, projectId: row._projectsShare.projectId, permission: row._projectsShare.permission }
-  });
+  return result
+      .filter((row) => { return row._projectsShare.projectId === projectId })
+      .map((row) => {
+          return { name: row.name, projectId: row._projectsShare.projectId, permission: row._projectsShare.permission }
+      });
 };
 
 // Running as Mongo Realm function

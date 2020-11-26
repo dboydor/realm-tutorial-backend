@@ -37,19 +37,19 @@ describe('insert', () => {
       await utils.setGlobalUser(data, "user1")
 
       // console.log(context.user.custom_data)
-      // console.log(await utils.getUser("user2"))
-      // console.log(await utils.getUser("user3"))
+      // console.log(await utils.getUser(data, "user2"))
+      // console.log(await utils.getUser(data, "user3"))
 
-      const result = await projectGetShare();
+      const result = await projectGetShare("user1Project1");
       // console.log(result)
 
-      expect(result.length).toEqual(8);
+      expect(result.length).toEqual(2);
       expect(result[0]).toHaveProperty('name');
       expect(result[0]).toHaveProperty('projectId');
       expect(result[0]).toHaveProperty('permission');
       expect(result[0].name).toEqual("user2@mail.com");
-      expect(result[2].name).toEqual("user2@mail.com");
-      expect(result[4].name).toEqual("user3@mail.com");
-      expect(result[7].name).toEqual("user3@mail.com");
+      expect(result[0].projectId).toEqual("user1Project1");
+      expect(result[1].name).toEqual("user3@mail.com");
+      expect(result[1].projectId).toEqual("user1Project1");
   });
 });
