@@ -37,14 +37,14 @@ describe('insert', () => {
   });
 
   it('should fail because user already owns this project', async () => {
-    const result = await projectRemoveShare("user1Project1", "user1");
+    const result = await projectRemoveShare("user1Project1", "user1@mail.com");
     expect(result.error).toEqual("You cannot remove share from yourself");
   });
 
   it('should fail because user already owns this project', async () => {
     //console.log(await utils.getUser(data, "user2"))
 
-    const result = await projectRemoveShare("user1Project1", "user2");
+    const result = await projectRemoveShare("user1Project1", "user2@mail.com");
     expect(result.error).toEqual("Project user1Project1 was not shared with user user2");
   });
 
@@ -52,7 +52,7 @@ describe('insert', () => {
     await utils.addProjects(data, "user1", 3, "r", "user2")
     //await utils.addProjects(data, "user1", 5, "rw", "user3")
 
-    const result = await projectRemoveShare("user1Project1", "user2");
+    const result = await projectRemoveShare("user1Project1", "user2@mail.com");
 
     const user = await utils.getUser(data, "user2");
     // console.log(user)

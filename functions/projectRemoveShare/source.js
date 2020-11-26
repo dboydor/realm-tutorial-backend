@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------
 //  projectRemoveShare
 // -------------------------------------------------------------------
-const task = async function(projectId, userId) {
+const task = async function(projectId, shareToEmail) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
@@ -14,9 +14,9 @@ const task = async function(projectId, userId) {
     return { error: `Project id ${projectId} was not found` };
   }
 
-  const userToRemove = await users.findOne({ _id: ObjectId(userId) });
+  const userToRemove = await users.findOne({ name: shareToEmail });
   if (userToRemove == null) {
-    return { error: `User ${userId} was not found` };
+    return { error: `User ${shareToEmail} was not found` };
   }
 
   if (userToRemove._id === thisUser._id) {
