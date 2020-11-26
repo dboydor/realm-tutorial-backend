@@ -16,7 +16,7 @@ const task = async function(projectId, shareToEmail, permission) {
 
     // Find user to add
     const shareUser = await users.findOne({ name: shareToEmail });
-    if (shareUser == null) {
+    if (!shareUser) {
         return { error: `User ${shareToEmail} was not found` };
     }
 
@@ -25,6 +25,11 @@ const task = async function(projectId, shareToEmail, permission) {
     }
 
     const { _projectsShare } = shareUser;
+
+    if (!_projectsShare) {
+        return { error: `User ${shareToEmail} is missing _projectsShare array!` };
+    }
+
     const alreadyExists = !!_projectsShare.find(project => {
         return project.projectId === projectId && project.permission === permission
     });
@@ -57,7 +62,7 @@ const task = async function(projectId, shareToEmail, permission) {
         // If this share was already defined with a different permission, remove
         // the old version first
         if (removePrevious) {
-            const result = await context.functions.execute("projectRemoveShare", projectId, shareUser._id);
+            const result = await context.functions.execute("projectRemoveShare", projectId, shareToEmail);
             if (result && result.error) {
                 return result;
             }

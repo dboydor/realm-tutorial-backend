@@ -15,8 +15,12 @@ const task = async function(projectId, userId) {
 
   // Find user to add
   const thisUser = await users.findOne({ _id: ObjectId(userId) });
-  if (thisUser == null) {
+  if (!thisUser) {
       return { error: `User ${userId} was not found` };
+  }
+
+  if (!thisUser.projects) {
+      return { error: `User ${userId} is missing projects array!` };
   }
 
   if (thisUser.projects.find(project => project.projectId === projectId)) {

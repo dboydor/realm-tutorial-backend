@@ -15,7 +15,7 @@ const task = async function(projectId, shareToEmail) {
   }
 
   const userToRemove = await users.findOne({ name: shareToEmail });
-  if (userToRemove == null) {
+  if (!userToRemove) {
     return { error: `User ${shareToEmail} was not found` };
   }
 
@@ -24,6 +24,10 @@ const task = async function(projectId, shareToEmail) {
   }
 
   const { _projectsShare } = userToRemove;
+
+  if (!_projectsShare) {
+      return { error: `User ${shareToEmail} is missing _projectsShare array!` };
+  }
 
   if (!_projectsShare.find(project => project.projectId === projectId)) {
       return { error: `Project ${projectId} was not shared with user ${userToRemove._id}` };

@@ -14,6 +14,10 @@ const task = async function (partition) {
       // by a system function.
       const { _projectsShare } = thisUser;
 
+      if (!_projectsShare) {
+          return false;
+      }
+
       return !!_projectsShare.find(project => partition === `user=${project.userId}`)
   } catch (error) {
       console.error(error);

@@ -7,6 +7,10 @@ const task = async function (projectId) {
       // by a system function.
       const { _projectsShare } = context.user.custom_data;
 
+      if (!_projectsShare) {
+          return false;
+      }
+
       return !!_projectsShare.find(project => {
           return project.projectId === projectId && project.permission === "rw"
       })
