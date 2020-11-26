@@ -66,7 +66,7 @@ module.exports = {
 
   getUser: async (data, userId) => {
     const users = await data.db.collection('User');
-    return await users.findOne({ _id: {$eq: userId }})
+    return await users.findOne({ _id: { $eq: userId }})
   },
 
   setGlobalUser: async (data, userId) => {

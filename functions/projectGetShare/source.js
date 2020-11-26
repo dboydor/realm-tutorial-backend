@@ -15,7 +15,7 @@ const task = async function() {
       { _id: { $ne: thisUser._id }}, // ...is not me
   ]
 
-  let result = await users.aggregate(
+  let result = await users.aggregate([
     { $unwind: "$_projectsShare" }, // One row for each project share
     { $match: { $and: conditions }},
     { $project: {
@@ -23,7 +23,7 @@ const task = async function() {
           _projectsShare: 1
        }
     },
-  )
+  ])
   .toArray();
 
   // Flatten result

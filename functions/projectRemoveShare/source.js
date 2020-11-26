@@ -6,14 +6,15 @@ const task = async function(projectId, userId) {
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
   const thisUser = context.user.custom_data;
+  const ObjectId = (id) => { return !context.runningAsSystem ? id : new BSON.ObjectId(id) }
 
   // Find project to remove
-  const project = await projects.findOne({ _id: projectId });
+  const project = await projects.findOne({ _id: ObjectId(projectId) });
   if (!project) {
     return { error: `Project id ${projectId} was not found` };
   }
 
-  const userToRemove = await users.findOne({ _id: userId });
+  const userToRemove = await users.findOne({ _id: ObjectId(userId) });
   if (userToRemove == null) {
     return { error: `User ${userId} was not found` };
   }
