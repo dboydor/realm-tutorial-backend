@@ -7,6 +7,10 @@ const task = async function(projectId, userId) {
   const projects = cluster.db("tracker").collection("Project");
   const ObjectId = (id) => { return !context.runningAsSystem ? id : new BSON.ObjectId(id) }
 
+  console.log(projectId)
+  console.log(userId)
+  console.log(typeof ObjectId(projectId))
+
   // Find project to add
   const project = await projects.findOne({ _id: ObjectId(projectId) });
   if (!project) {
@@ -14,7 +18,7 @@ const task = async function(projectId, userId) {
   }
 
   // Find user to add
-  const thisUser = await users.findOne({ _id: ObjectId(userId) });
+  const thisUser = await users.findOne({ _id: userId });
   if (!thisUser) {
       return { error: `User ${userId} was not found` };
   }

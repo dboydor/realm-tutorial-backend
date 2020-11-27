@@ -13,7 +13,7 @@ const task = async function(projectId, userId) {
       return { error: `Project id ${projectId} was not found` };
   }
 
-  const thisUser = await users.findOne({ _id: ObjectId(userId) });
+  const thisUser = await users.findOne({ _id: userId });
   if (!thisUser) {
       return { error: `User ${userId} was not found` };
   }
