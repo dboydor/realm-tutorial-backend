@@ -7,7 +7,17 @@
 const task = async function (event) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
+
+  if (!event.fullDocument) {
+      return { error: `Event's fullDocument is undefined: ${JSON.stringify(event)}` };
+  }
+
   const project = event.fullDocument;
+
+  if (!project.ownerId) {
+      return { error: `Project's ownerId is undefined: ${JSON.stringify(project)}` };
+  }
+
   const userId = project.ownerId;
   let result;
 

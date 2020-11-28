@@ -1,6 +1,6 @@
-// --------------------------------
+// -------------------------------------------------------------------
 //  projectAddShare
-// --------------------------------
+// -------------------------------------------------------------------
 const task = async function(projectId, shareToEmail, permission) {
     const cluster = context.services.get("mongodb-atlas");
     const users = cluster.db("tracker").collection("User");

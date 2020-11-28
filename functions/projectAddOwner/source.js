@@ -1,18 +1,18 @@
-// --------------------------------
+// -------------------------------------------------------------------
 //  projectAddOwner
-// --------------------------------
+//
+//  Called from trigger: projectId is ObjectId and userId is String
+// -------------------------------------------------------------------
 const task = async function(projectId, userId) {
   const cluster = context.services.get("mongodb-atlas");
   const users = cluster.db("tracker").collection("User");
   const projects = cluster.db("tracker").collection("Project");
-  const ObjectId = (id) => { return !context.runningAsSystem ? id : new BSON.ObjectId(id) }
 
   console.log(projectId)
   console.log(userId)
-  console.log(typeof ObjectId(projectId))
 
   // Find project to add
-  const project = await projects.findOne({ _id: ObjectId(projectId) });
+  const project = await projects.findOne({ _id: projectId });
   if (!project) {
       return { error: `Project id ${projectId} was not found` };
   }
